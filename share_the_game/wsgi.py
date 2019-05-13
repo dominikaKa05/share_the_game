@@ -1,5 +1,5 @@
 """
-WSGI config for take_the_game project.
+WSGI config for share_the_game project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'take_the_game.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'share_the_game.settings')
 
 application = get_wsgi_application()
