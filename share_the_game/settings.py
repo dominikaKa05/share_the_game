@@ -50,7 +50,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'take_the_game.urls'
+ROOT_URLCONF = 'share_the_game.urls'
 
 TEMPLATES = [
     {
