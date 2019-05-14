@@ -15,9 +15,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from sharing_app import views
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('profiles/', include('django.contrib.auth.urls'))
+    path('', views.MainPageView.as_view(), name = 'main_page'),
+    path('register/', views.RegisterView.as_view(), name='register'),
+    path('login/', views.LoginView.as_view(), name = 'login')
 ]
