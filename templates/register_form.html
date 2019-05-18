@@ -1,12 +1,13 @@
 {% extends 'base.html' %}
-
+{% load crispy_forms_tags %}
 {% block title %} Rejestracja {% endblock %}
 
 {% block content %}
+    <form method="post" novalidate>
   <h2> Załóż konto</h2>
   <form action={% url 'register' %} method='post'>
     {% csrf_token %}
-    {{ form }}
+      {{ form|crispy }}
     <button type='submit'> Zarejestruj się </button>
   </form>
 {% endblock %}

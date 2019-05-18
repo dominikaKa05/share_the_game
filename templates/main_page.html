@@ -1,7 +1,10 @@
 {% extends 'base.html'%}
-
+   {% load crispy_forms_tags %}
 {% block content %}
+
       <button> <a href="{% url 'login'%}"> Zaloguj się </a> </button>
     <button> <a href="{% url 'register'%}">Zarejestruj się </a></button>
+
+
 {% endblock %}
 

@@ -1,4 +1,4 @@
-#!/home/coderslab/Pulpit/take_the_game/venv/bin/python
+#!/home/coderslab/Pulpit/share_the_game/venv/bin/python
 # -*- coding: utf-8 -*-
 import re
 import sys

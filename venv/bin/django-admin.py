@@ -1,4 +1,4 @@
-#!/home/coderslab/Pulpit/take_the_game/venv/bin/python
+#!/home/coderslab/Pulpit/share_the_game/venv/bin/python
 from django.core import management
 
 if __name__ == "__main__":

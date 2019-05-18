@@ -37,7 +37,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="/home/coderslab/Pulpit/take_the_game/venv"
+VIRTUAL_ENV="/home/coderslab/Pulpit/share_the_game/venv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"
