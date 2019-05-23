@@ -3,11 +3,11 @@ from django.http import request
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import TemplateView, DetailView, ListView
+from django.views.generic import ListView
 from django.views.generic.edit import FormView
-from sharing_app.forms import LoginForm, RegisterForm
+from sharing_app.forms import  RegisterForm, ProductAddForm, ProductSearchForm
 
-from sharing_app.models import Profile
+from sharing_app.models import Profile, Product
 from django.contrib.auth.models import User
 
 
@@ -17,7 +17,7 @@ class MainPageView(View):
 		ctx = {
 			"profile": profile,
 		}
-		return render(request, "main_page.html", ctx)
+		return render(request, 'main_page.html', ctx)
 
 
 class RegisterView(FormView):
@@ -31,10 +31,28 @@ class RegisterView(FormView):
 		user.save()
 		raw_password = form.cleaned_data.get('password1')
 		user = authenticate(username=user.username, password=raw_password)
-		login(request, user)
-		return render(request, 'register_form.html', {'form':form})
-#
-# class LoginView(FormView):
-# 	template_name = 'registration/login.html'
-# 	form_class = LoginForm
-# 	success_url = reverse_lazy('main_page')
+		login(self.request, user)
+		return render(self.request, 'main_page.html', {'form':form})
+
+class ProductSearchView(FormView):
+	model = Product
+	template_name = 'product_search.html'
+	form_class = ProductSearchForm
+	def form_valid(self, form):
+		name =form.cleaned_data['name']
+		category = form.cleaned_data['category']
+		min_players = form.cleaned_data['min_number_of_players']
+		max_players_= form.cleaned_data ['max_number_of_players']
+		min_age = form.cleaned_data['min_age']
+		# if name != "":
+		#
+		# if category
+
+
+class ProductAddView(FormView):
+	model = Product
+	template_name = 'product_add.html'
+	form_class = ProductAddForm
+
+
+

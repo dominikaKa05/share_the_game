@@ -4,16 +4,16 @@ from django.http import request
 
 from django.forms import ModelForm, PasswordInput
 from django.contrib.auth.models import User
-from .models import Profile
+from .models import Profile, Product
 
 
-class LoginForm(ModelForm):
-	class Meta:
-		model = User
-		fields = ['username', 'password']
-		widgets = {
-			'password': forms.PasswordInput(),
-		}
+# class LoginForm(ModelForm):
+# 	class Meta:
+# 		model = User
+# 		fields = ['username', 'password']
+# 		widgets = {
+# 			'password': forms.PasswordInput(),
+# 		}
 
 
 class RegisterForm(UserCreationForm):
@@ -27,3 +27,14 @@ class RegisterForm(UserCreationForm):
 			'password1': forms.PasswordInput(),
 			'password2': forms.PasswordInput()
 		}
+
+class ProductSearchForm(ModelForm):
+	class Meta:
+		model = Product
+		fields = '__all__'
+		exclude = ('image','description')
+
+class ProductAddForm(ModelForm):
+	class Meta:
+		model = Product
+		fields = '__all__'

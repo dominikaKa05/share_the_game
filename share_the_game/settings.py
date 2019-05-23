@@ -37,8 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'sharing_app',
     'crispy_forms',
-    'sharing_app'
 ]
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
@@ -81,7 +81,7 @@ WSGI_APPLICATION = 'share_the_game.wsgi.application'
 DATABASES = {
 	'default' :{
     'HOST': '127.0.0.1',
-    'NAME': 'take_the_game_db',
+    'NAME': 'share_the_game_db',
     'ENGINE': 'django.db.backends.postgresql_psycopg2',
     'USER': 'postgres',
     'PASSWORD': 'coderslab',

@@ -28,10 +28,11 @@ class Profile(models.Model):
 		instance.profile.save()
 
 class Product(models.Model):
-	name = models.CharField(max_length=120,verbose_name='Tytuł')
-	category = models.CharField(max_length=120, verbose_name='Kategoria')
-	description = models.TextField()
-	min_number_of_gamers = models.IntegerField()
-	max_numer_of_gamers = models.IntegerField
-	image = models.ImageField(upload_to='images/')
+	name = models.CharField(max_length=120,verbose_name='Tytuł', blank=False)
+	category = models.CharField(max_length=120, verbose_name='Kategoria', blank=False)
+	description = models.TextField(blank=False, verbose_name='Opis', default='')
+	min_number_of_players = models.IntegerField(blank=False, verbose_name='Minimalna liczba graczy', default='')
+	max_number_of_players = models.IntegerField(blank=False, verbose_name='Maksymalna liczba graczy', default='')
+	min_age = models.IntegerField(blank=True, verbose_name='Minimalny wiek gracza',default='')
+	image = models.ImageField(upload_to='gallery/',blank=True)
 
