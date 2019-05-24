@@ -1,16 +1,43 @@
 {% extends "base.html" %}
+{% load staticfiles %}
 {% load crispy_forms_tags %}
 
-{% block content %}
-    <h2> Wyszukaj grę </h2>
+{% block content%}
 
-<form action='{% url 'product_search' %}' method='post'>
+<div class="container">
 
-   {% csrf_token %}
-      {{ form|crispy }}
-         <button type='submit'> Szukaj </button>
+    <h2> Wyszukiwarka gier</h2>
+
+    <form class="form-inline" action="" method="GET">
+        {{ form|crispy }}
+        <button class="btn" type="submit">Szukaj</button>
     </form>
 
-    <button> <a href="{% url 'product_add'%}"> Dodaj grę do bazy </a> </button>
+    <table class="table table-bordered table-condensed">
+        <tr>
+            <th>Tytuł</th>
+            <th>Kategoria</th>
+            <th>Minimalna liczba graczy</th>
+            <th>Maksymalna liczba graczy</th>
+            <th>Minimalny wiek graczy</th>
+        </tr>
+        {% for object in object_list %}
+        <tr>
+            <td>{{object.name}}</td>
+            <td>{{object.category}}</td>
+            <td>{{object.min_number_of_players}}</td>
+            <td>{{object.max_number_of_players}}</td>
+            <td>{{object.min_age}}</td>
+            <td> <img style="width: 70px; height: 70px;" src="{{ object.image.url }}" ></td>
+
+        </tr>
+        {% endfor %}
+    </table>
+
+    {% if is_paginated %}
+{#        {% include "paginator.html" %}#}
+    {% endif %}
+
+</div>
 
 {% endblock %}

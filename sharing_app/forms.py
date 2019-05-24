@@ -28,11 +28,39 @@ class RegisterForm(UserCreationForm):
 			'password2': forms.PasswordInput()
 		}
 
-class ProductSearchForm(ModelForm):
-	class Meta:
-		model = Product
-		fields = '__all__'
-		exclude = ('image','description')
+# class ProductSearchForm(ModelForm):
+# 	class Meta:
+# 		model = Product
+# 		fields = '__all__'
+# 		exclude = ('image','description')
+
+class ProductSearchForm(forms.Form):
+	search_title = forms.CharField(
+		required=False,
+		label='Szukaj po tytule',
+		widget=forms.TextInput(attrs={'placeholder': 'Szukaj!'})
+	)
+
+	search_category = forms.CharField(
+		required=False,
+		label='Szukaj po kateogorii',
+		widget=forms.TextInput(attrs={'placeholder': 'Szukaj!'})
+	)
+
+	search_age_min = forms.IntegerField(
+		required=False,
+		label='Minimalny wiek gracza'
+	)
+
+	search_players_= forms.IntegerField(
+		required=False,
+		label= 'Liczba graczy'
+	 )
+	# search_players_min = forms.IntegerField(
+	# 	required=False,
+	# 	label='Minimalna liczba graczy'
+	# )
+
 
 class ProductAddForm(ModelForm):
 	class Meta:
