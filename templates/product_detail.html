@@ -6,17 +6,11 @@
 
 <div class="container">
 
-    <h2> Wyszukiwarka gier</h2>
-
-    <form class="form-inline" action="" method="GET">
-        {{ form|crispy }}
-        <button class="btn" type="submit">Szukaj</button>
-    </form>
-
     <table class="table table-bordered table-condensed">
         <tr>
             <th>Tytuł</th>
             <th>Kategoria</th>
+            <th>Opis</th>
             <th>Minimalna liczba graczy</th>
             <th>Maksymalna liczba graczy</th>
             <th>Minimalny wiek graczy</th>
@@ -25,20 +19,17 @@
         <tr>
             <td>{{object.name}}</td>
             <td>{{object.category}}</td>
+            <td>{{ object.description}}</td>
             <td>{{object.min_number_of_players}}</td>
             <td>{{object.max_number_of_players}}</td>
             <td>{{object.min_age}}</td>
-            <td> <img style="width: 70px; height: 70px;" src="{{ object.imag.url }}" ></td>
+            <td> <img style="width: 100px; height: 100px;" src="{{ object.image.url }}" ></td>
 
         </tr>
         {% endfor %}
     </table>
 
-    {% if is_paginated %}
-{#        {% include "paginator.html" %}#}
-    {% endif %}
 
 </div>
-        <button> <a href="{% url 'product_add'%}"> Dodaj grę do naszej bazy </a></button>
 
 {% endblock %}

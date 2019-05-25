@@ -28,8 +28,22 @@ class Profile(models.Model):
 		instance.profile.save()
 
 class Product(models.Model):
+	CATEGORY_CHOICES = (
+		('', 'Wybierz kategorię'),
+		('strategiczne', 'strategiczne'),
+		('towarzyskie', 'towarzyskie'),
+		('karciane', 'karciane'),
+		('rodzinne', 'rodzinne'),
+		('ekonomiczne', 'ekonomiczne'),
+		('przygodowe', 'przygodowe'),
+		('logiczne', 'logiczne'),
+		('kooperacyjne', 'kooperacyjne'),
+		('zręcznościowe', 'zręcznościowe'),
+		('podróżne', 'podróżne'),
+	)
+
 	name = models.CharField(max_length=120,verbose_name='Tytuł', blank=False)
-	category = models.CharField(max_length=120, verbose_name='Kategoria', blank=False)
+	category = models.CharField(max_length=120, verbose_name='Kategoria', choices=CATEGORY_CHOICES)
 	description = models.TextField(blank=False, verbose_name='Opis', default='')
 	min_number_of_players = models.IntegerField(blank=False, verbose_name='Minimalna liczba graczy', default='')
 	max_number_of_players = models.IntegerField(blank=False, verbose_name='Maksymalna liczba graczy', default='')

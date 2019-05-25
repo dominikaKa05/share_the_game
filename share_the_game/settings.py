@@ -131,6 +131,3 @@ MEDIA_URL= "/media/"
 
 STATIC_URL = '/static/'
 
-LOGIN_REDIRECT_URL = '/'
-
-

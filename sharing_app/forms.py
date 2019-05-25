@@ -45,21 +45,23 @@ class ProductSearchForm(forms.Form):
 		required=False,
 		label='Szukaj po kateogorii',
 		widget=forms.TextInput(attrs={'placeholder': 'Szukaj!'})
+
+	)
+
+	# search_players_min = forms.IntegerField(
+	# 	required=False,
+	# 	label='Minimalna liczba graczy'
+	# )
+
+	search_players = forms.IntegerField(
+		required=False,
+		label=' liczba graczy'
 	)
 
 	search_age_min = forms.IntegerField(
 		required=False,
 		label='Minimalny wiek gracza'
 	)
-
-	search_players_= forms.IntegerField(
-		required=False,
-		label= 'Liczba graczy'
-	 )
-	# search_players_min = forms.IntegerField(
-	# 	required=False,
-	# 	label='Minimalna liczba graczy'
-	# )
 
 
 class ProductAddForm(ModelForm):

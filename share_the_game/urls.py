@@ -32,9 +32,11 @@ urlpatterns = [
     path('', views.MainPageView.as_view(), name = 'main_page'),
     path('register/', views.RegisterView.as_view(), name='register'),
     path('login/',LoginView.as_view(), name='login'),
-    path('logout/', LogoutView.as_view(), name= 'logout'),
+    # path('logout/', LogoutView.as_view(), {'template_name': '/logout.html'},name= 'logout'),
+    path('logout/', views.LogoutView.as_view(), name='logout'),
     path('search/',views.ProductSearchListView.as_view(), name='product_search'),
     path('add/',views.ProductAddView.as_view(), name='product_add'),]
+
 # ]+ static(settings.MEDIA_URL, document_root= settings.MEDIA_ROOT)
 urlpatterns += staticfiles_urlpatterns()
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
