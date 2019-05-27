@@ -4,32 +4,39 @@
 
 {% block content%}
 
-<div class="container">
+{#<div class="container">#}
+{##}
+{#    <table class="table table-bordered table-condensed">#}
+{#        <tr>#}
+{#            <th>Tytuł</th>#}
+{#            <th>Kategoria</th>#}
+{#            <th>Opis</th>#}
+{#            <th>Minimalna liczba graczy</th>#}
+{#            <th>Maksymalna liczba graczy</th>#}
+{#            <th>Minimalny wiek graczy</th>#}
+{#        </tr>#}
+{#        {% for object in object_list %}#}
+{#        <tr>#}
+{#            <td>{{object.name}}</td>#}
+{#            <td>{{object.category}}</td>#}
+{#            <td>{{ object.description}}</td>#}
+{#            <td>{{object.min_number_of_players}}</td>#}
+{#            <td>{{object.max_number_of_players}}</td>#}
+{#            <td>{{object.min_age}}</td>#}
+{#            <td> <img style="width: 100px; height: 100px;" src="{{ object.image.url }}" ></td>#}
+{##}
+{#        </tr>#}
+{#        {% endfor %}#}
+{#    </table>#}
+{##}
+{##}
+{#</div>#}
 
-    <table class="table table-bordered table-condensed">
-        <tr>
-            <th>Tytuł</th>
-            <th>Kategoria</th>
-            <th>Opis</th>
-            <th>Minimalna liczba graczy</th>
-            <th>Maksymalna liczba graczy</th>
-            <th>Minimalny wiek graczy</th>
-        </tr>
-        {% for object in object_list %}
-        <tr>
-            <td>{{object.name}}</td>
-            <td>{{object.category}}</td>
-            <td>{{ object.description}}</td>
-            <td>{{object.min_number_of_players}}</td>
-            <td>{{object.max_number_of_players}}</td>
-            <td>{{object.min_age}}</td>
-            <td> <img style="width: 100px; height: 100px;" src="{{ object.image.url }}" ></td>
 
-        </tr>
-        {% endfor %}
-    </table>
+    {{ product.name }}
 
 
-</div>
+
+    <button>Dodaj grę do swojej kolekcji</button>
 
 {% endblock %}

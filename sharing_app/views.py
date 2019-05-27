@@ -90,7 +90,7 @@ class ProductAddView(LoginRequiredMixin, FormView):
 	template_name = 'product_add.html'
 	form_class = ProductAddForm
 
-	def form_valid(self,form):
+	def form_valid(self, form):
 		new_product = Product()
 		new_product.name = form.cleaned_data['name']
 		new_product.category = form.cleaned_data['category']
@@ -101,4 +101,35 @@ class ProductAddView(LoginRequiredMixin, FormView):
 		new_product.image = request.FILES['image']
 		new_product.save()
 		return redirect('product_detail', new_product.pk)
+
+
+# class ProfileView(View):
+# 	def get(self,request):
+# 		owner = request.user
+#
+# 		products = Product.objects.get(pk=request.user.id)
+# 		ctx = {
+# 			'products': products,
+# 			'owner': owner
+# 		}
+# 		return render(request, 'profile.html', ctx)
+
+class ProfileView(ListView):
+	model = Profile
+
+	def head(self, *args, **kwargs):
+		owner = request.user
+		products = Product.objects.filter(request.user.id)
+		owned_products = Profile.owned_product.get(pk=products.id)
+		response = HttpResponse('')
+		# RFC 1123 date format
+		response['Last-Modified'] = last_book.publication_date.strftime('%a, %d %b %Y %H:%M:%S GMT')
+		return response
+
+
+class ProductDetailListView(View):
+
+	def get(self,request, object_id):
+		product=  Product.objects.get(pk=object_id)
+
 

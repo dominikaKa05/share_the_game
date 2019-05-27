@@ -35,7 +35,9 @@ urlpatterns = [
     # path('logout/', LogoutView.as_view(), {'template_name': '/logout.html'},name= 'logout'),
     path('logout/', views.LogoutView.as_view(), name='logout'),
     path('search/',views.ProductSearchListView.as_view(), name='product_search'),
-    path('add/',views.ProductAddView.as_view(), name='product_add'),]
+    path('add/',views.ProductAddView.as_view(), name='product_add'),
+    path('search/<int:object_id>/detail/', views.ProductDetailListView.as_view(), name = 'product_detail'),]
+    # path('profile',views.ProfileView.as_view(), name='profile'),]
 
 # ]+ static(settings.MEDIA_URL, document_root= settings.MEDIA_ROOT)
 urlpatterns += staticfiles_urlpatterns()

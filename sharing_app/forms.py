@@ -17,8 +17,7 @@ from .models import Profile, Product
 
 
 class RegisterForm(UserCreationForm):
-
-	city = forms.CharField(label= 'Miasto')
+	city = forms.CharField(label='Miasto')
 
 	class Meta:
 		model = User
@@ -27,6 +26,7 @@ class RegisterForm(UserCreationForm):
 			'password1': forms.PasswordInput(),
 			'password2': forms.PasswordInput()
 		}
+
 
 # class ProductSearchForm(ModelForm):
 # 	class Meta:
@@ -48,19 +48,21 @@ class ProductSearchForm(forms.Form):
 
 	)
 
-	# search_players_min = forms.IntegerField(
-	# 	required=False,
-	# 	label='Minimalna liczba graczy'
-	# )
-
-	search_players = forms.IntegerField(
+	search_players_min = forms.IntegerField(
 		required=False,
-		label=' liczba graczy'
+		label='liczba graczy',
+		widget = forms.NumberInput(attrs={'placeholder': 'Od: '})
+	)
+
+	search_players_max = forms.IntegerField(
+		required=False,
+		# label=' Maksymalna liczba graczy'
+		widget=forms.NumberInput(attrs={'placeholder': 'Do: '})
 	)
 
 	search_age_min = forms.IntegerField(
 		required=False,
-		label='Minimalny wiek gracza'
+		label='Wiek gracza'
 	)
 
 
