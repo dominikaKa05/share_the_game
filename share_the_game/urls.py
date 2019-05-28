@@ -36,7 +36,9 @@ urlpatterns = [
     path('logout/', views.LogoutView.as_view(), name='logout'),
     path('search/',views.ProductSearchListView.as_view(), name='product_search'),
     path('add/',views.ProductAddView.as_view(), name='product_add'),
-    path('search/<int:object_id>/detail/', views.ProductDetailListView.as_view(), name = 'product_detail'),]
+    path('search/<int:object_id>/detail/', views.ProductDetailView.as_view(), name = 'product_detail'),
+    path('profile/', views.ProfileView.as_view(), name = 'profile_view'),
+    path('search/<int:object_id>/collection/',views.AddToCollectionView.as_view(), name='add_to_collection')]
     # path('profile',views.ProfileView.as_view(), name='profile'),]
 
 # ]+ static(settings.MEDIA_URL, document_root= settings.MEDIA_ROOT)

@@ -114,22 +114,43 @@ class ProductAddView(LoginRequiredMixin, FormView):
 # 		}
 # 		return render(request, 'profile.html', ctx)
 
-class ProfileView(ListView):
-	model = Profile
-
-	def head(self, *args, **kwargs):
-		owner = request.user
-		products = Product.objects.filter(request.user.id)
-		owned_products = Profile.owned_product.get(pk=products.id)
-		response = HttpResponse('')
-		# RFC 1123 date format
-		response['Last-Modified'] = last_book.publication_date.strftime('%a, %d %b %Y %H:%M:%S GMT')
-		return response
+class ProfileView(View):
+	def get(self,request):
+		logged_user = Profile.objects.get(pk=request.user.id)
+		user_products = logged_user.owned_product.all()
+		ctx = {
+			'logged_user': logged_user,
+			'user_products':user_products
+		}
+		return render(request,'profile.html',ctx)
 
 
-class ProductDetailListView(View):
+
+
+class ProductDetailView(View):
 
 	def get(self,request, object_id):
-		product=  Product.objects.get(pk=object_id)
+		product= Product.objects.get(pk=object_id)
+		ctx = {
+			'product': product
+		}
+		return render(request,'product_detail.html',ctx)
 
+
+class AddToCollectionView(View):
+
+	def get(self,request,object_id):
+		product = Product.objects.get(pk=object_id)
+		logged_user = Profile.objects.get(pk=request.user.id)
+		logged_user.owned_product.add(product)
+		owner = product.profile_set.all()
+		user_products = logged_user.owned_product.all()
+
+		ctx = {
+			'product':product,
+			'owner': owner,
+			'logged_user':logged_user,
+			'user_products':user_products
+		}
+		return render(request, 'profile.html', ctx)
 

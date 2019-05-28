@@ -28,6 +28,7 @@
             <td>{{object.min_number_of_players}}</td>
             <td>{{object.max_number_of_players}}</td>
             <td>{{object.min_age}}</td>
+            <td> <button> <a href = {% url 'add_to_collection' object.pk %}>Dodaj grę do swojej kolekcji</a></button></td>
 {#            <td> <img src='{{ object.image.url}}'> </td>#}
 
 
@@ -40,6 +41,6 @@
 {#    {% endif %}#}
 
 </div>
-        <button> <a href="{% url 'product_add'%}"> Dodaj grę do naszej bazy </a></button>
+{#        <button> <a href="{% url 'add_to_collection' %}"> Dodaj grę do naszej bazy </a></button>#}
 
 {% endblock %}

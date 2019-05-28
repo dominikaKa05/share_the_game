@@ -3,16 +3,17 @@
 {% load crispy_forms_tags %}
 
 {% block content%}
-    <h2>Profil użytkownika {{ owner.name }}</h2>
+    <h2>Profil użytkownika {{ request.user.username }}</h2>
 
-{#        {% for product in products %}#}
-{#        <tr>#}
-{#            <td></td>#}
-{#            <td>{{product.name}}#}
-{#        <a href="product_detail.html"></a></td>#}
 
+        <tr>
+            <td> Lista gier </td>
+             {% for product in user_products %}
+            <td>{{product.name}}
+{#                <img src="{{ product.image.url }}"> <a href="product_detail.html"></a></img> </td>#}
 
         </tr>
+    {% endfor %}
 
     </table>
 
