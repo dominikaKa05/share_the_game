@@ -9,26 +9,26 @@ from django.utils.encoding import smart_text
 
 class Product(models.Model):
 	CATEGORY_CHOICES = (
-		('', 'Wybierz kategorię'),
-		('strategiczne', 'strategiczne'),
-		('towarzyskie', 'towarzyskie'),
-		('karciane', 'karciane'),
-		('rodzinne', 'rodzinne'),
-		('ekonomiczne', 'ekonomiczne'),
-		('przygodowe', 'przygodowe'),
-		('logiczne', 'logiczne'),
-		('kooperacyjne', 'kooperacyjne'),
-		('zręcznościowe', 'zręcznościowe'),
-		('podróżne', 'podróżne'),
+		('', 'Wybierz kategorię gry'),
+		('strategiczna', 'strategiczna'),
+		('towarzyska', 'towarzyska'),
+		('karciana', 'karciana'),
+		('rodzinna', 'rodzinna'),
+		('ekonomiczna', 'ekonomiczna'),
+		('przygodowa', 'przygodowa'),
+		('logiczna', 'logiczna'),
+		('kooperacyjna', 'kooperacyjna'),
+		('zręcznościowa', 'zręcznościowa'),
+		('podróżna', 'podróżna'),
 	)
 
 	name = models.CharField(max_length=120,verbose_name='Tytuł', blank=False)
 	category = models.CharField(max_length=120, verbose_name='Kategoria', choices=CATEGORY_CHOICES)
-	description = models.TextField(blank=False, verbose_name='Opis', default='')
-	min_number_of_players = models.IntegerField(blank=False, verbose_name='Minimalna liczba graczy', default='')
-	max_number_of_players = models.IntegerField(blank=False, verbose_name='Maksymalna liczba graczy', default='')
-	min_age = models.IntegerField(blank=True, verbose_name='Minimalny wiek gracza',default='')
-	image = models.ImageField(upload_to='gallery/',blank=True)
+	description = models.TextField(blank=False, verbose_name='Opis', default='Opis')
+	min_number_of_players = models.IntegerField(blank=False, verbose_name='Minimalna liczba graczy', default=0)
+	max_number_of_players = models.IntegerField(blank=True, verbose_name='Maksymalna liczba graczy', default=0)
+	min_age = models.IntegerField(blank=True, verbose_name='Minimalny wiek gracza',default=0)
+	image = models.FileField(null=True, blank=True)
 
 
 

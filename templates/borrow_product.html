@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <h5> Wypełnij poniższy formularz wypożyczenia gry. <br>
+        Po jego przesłaniu wypożyczający dostanie automatyczną wiadomość email z Twoją prośbą i odpowie na nią w celu ustalenia szczegółów wypożyczenia</h5>
+
+<form action='{% url 'borrow_product' object_id %}' method='post'>
+
+   {% csrf_token %}
+      {{ form|crispy }}
+
+         <button type='submit'> Prześlij formularz </button>
+
+    </form>
+
+{% endblock %}

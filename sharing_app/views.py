@@ -5,16 +5,19 @@ from django.contrib.auth import REDIRECT_FIELD_NAME, login as auth_login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import request, HttpResponseRedirect
 from django.shortcuts import render, redirect
+from django.template import Context, RequestContext
+from django.template.loader import get_template
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import ListView, RedirectView, CreateView
 from django.views.generic.edit import FormView
 from search_views.views import SearchListView
 from share_the_game import settings
-from sharing_app.forms import RegisterForm, ProductAddForm, ProductSearchForm
-
+from sharing_app.forms import RegisterForm, ProductSearchForm, ProductAddForm, ShareForm
 from sharing_app.models import Profile, Product
 from django.contrib.auth.models import User
+from django.core.mail import send_mail
+from django.conf import settings
 
 from sharing_app.templatetags.my_app_filters import ProductSearchFilter
 
@@ -79,15 +82,19 @@ class ProductSearchListView(LoginRequiredMixin, SearchListView):
 	form_class = ProductSearchForm
 	filter_class = ProductSearchFilter
 
+	def list(request):
+		product = Product.objects.all()
+		return render(request, "product_search.html", {'product': product})
+
 
 # class ProductAddView(LoginRequiredMixin, CreateView):
 # 	model = Product
-# 	template_name = 'product_add.html'
+# 	template_name = 'product_form.html'
 #     fields = "__all__"
 
-class ProductAddView(LoginRequiredMixin, FormView):
+class ProductAddView(LoginRequiredMixin, FormView, ):
 	model = Product
-	template_name = 'product_add.html'
+	template_name = 'product_form.html'
 	form_class = ProductAddForm
 
 	def form_valid(self, form):
@@ -98,9 +105,14 @@ class ProductAddView(LoginRequiredMixin, FormView):
 		new_product.min_number_of_players = form.cleaned_data['min_number_of_players']
 		new_product.max_number_of_players = form.cleaned_data['max_number_of_players']
 		new_product.min_age = form.cleaned_data['min_age']
-		new_product.image = request.FILES['image']
+		new_product.image = self.request.FILES['image']
 		new_product.save()
 		return redirect('product_detail', new_product.pk)
+
+
+# class ProductCreate(CreateView):
+# 	model = Product
+# 	fields = '__all__'
 
 
 # class ProfileView(View):
@@ -114,32 +126,30 @@ class ProductAddView(LoginRequiredMixin, FormView):
 # 		}
 # 		return render(request, 'profile.html', ctx)
 
-class ProfileView(View):
-	def get(self,request):
+class ProfileView(LoginRequiredMixin, View):
+	def get(self, request):
 		logged_user = Profile.objects.get(pk=request.user.id)
 		user_products = logged_user.owned_product.all()
 		ctx = {
 			'logged_user': logged_user,
-			'user_products':user_products
+			'user_products': user_products
 		}
-		return render(request,'profile.html',ctx)
+		return render(request, 'profile.html', ctx)
 
 
+class ProductDetailView(LoginRequiredMixin, View):
 
-
-class ProductDetailView(View):
-
-	def get(self,request, object_id):
-		product= Product.objects.get(pk=object_id)
+	def get(self, request, object_id):
+		product = Product.objects.get(pk=object_id)
 		ctx = {
 			'product': product
 		}
-		return render(request,'product_detail.html',ctx)
+		return render(request, 'product_detail.html', ctx)
 
 
-class AddToCollectionView(View):
+class AddToCollectionView(LoginRequiredMixin, View):
 
-	def get(self,request,object_id):
+	def get(self, request, object_id):
 		product = Product.objects.get(pk=object_id)
 		logged_user = Profile.objects.get(pk=request.user.id)
 		logged_user.owned_product.add(product)
@@ -147,10 +157,83 @@ class AddToCollectionView(View):
 		user_products = logged_user.owned_product.all()
 
 		ctx = {
-			'product':product,
+			'product': product,
 			'owner': owner,
-			'logged_user':logged_user,
-			'user_products':user_products
+			'logged_user': logged_user,
+			'user_products': user_products
 		}
 		return render(request, 'profile.html', ctx)
 
+
+class BorrowProductView(LoginRequiredMixin, View):
+
+	def get(self, request, object_id):
+		form = ShareForm()
+		ctx = {
+			'form': form,
+			'object_id':object_id
+		}
+		return render(request, 'borrow_product.html', ctx)
+
+	def post(self, request,object_id):
+		form = ShareForm(request.POST)
+
+		if form.is_valid():
+			selected_city = form.cleaned_data['selected_city']
+			borrow_date = form.cleaned_data['borrow_date']
+			return_date = form.cleaned_data['return_date']
+			product = Product.objects.get(pk=object_id)
+			logged_user = Profile.objects.get(pk=request.user.id)
+			sharing_user = Profile.objects.filter(city=selected_city).order_by('?').first()
+			from_email = settings.EMAIL_HOST_USER
+			to_email = [from_email, sharing_user.user.email]
+
+			send_mail(
+				'Cześć! ',
+				get_template('email.html').render(
+					({
+						'logged_user': logged_user,
+						'product': product,
+						'borrow_date': borrow_date,
+						'return_date': return_date
+					})
+				),
+				from_email,
+				to_email,
+				fail_silently=True,
+			)
+
+			ctx = {
+				'form': form
+			}
+		return render(request, 'main_page.html', ctx)
+	# template_name = 'borrow_product.html'
+	# form_class = ShareForm
+	#
+	# # success_url = '/thanks/'
+	#
+	# def get(self, request, object_id):
+	#
+	# def form_valid(self, form):
+	# 	selected_city = form.cleaned_data['city']
+	# 	borrow_date = form.cleaned_data['borrow_date']
+	# 	return_date = form.cleaned_data['return_date']
+	# 	product = Product.objects.get(pk=self.request.object.id)
+	# 	logged_user = Profile.objects.get(pk=self.request.user.id)
+	# 	sharing_user = Profile.objects.filter(city=selected_city).order_by('?').first()
+	# 	send_mail(
+	# 		'Cześć! ',
+	# 		get_template('email.html').render(
+	# 			Context({
+	# 				'logged_user': logged_user,
+	# 				'product': product,
+	# 				'borrow_date': borrow_date,
+	# 				'return_date': return_date,
+	# 			})
+	# 		),
+	# 		logged_user.email,
+	# 		sharing_user.email,
+	# 		fail_silently=True
+	# 	)
+	#
+	# 	return super().form_valid(form)

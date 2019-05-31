@@ -13,18 +13,12 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
-from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-from django.template.backends import django
-from django.template.context_processors import static
-from django.urls import path, include
-from django.conf import settings
 from django.conf.urls.static import static
-from share_the_game import settings
-from sharing_app import views
-# from django.contrib.auth import views as auth_views
+from django.contrib import admin
+from django.urls import path, include
 from django.contrib.auth.views import LogoutView, LoginView
-
+from sharing_app import views
+from share_the_game import settings
 
 
 urlpatterns = [
@@ -36,11 +30,14 @@ urlpatterns = [
     path('logout/', views.LogoutView.as_view(), name='logout'),
     path('search/',views.ProductSearchListView.as_view(), name='product_search'),
     path('add/',views.ProductAddView.as_view(), name='product_add'),
+    # path('add/',views.ProductCreate.as_view(), name='product_add'),
     path('search/<int:object_id>/detail/', views.ProductDetailView.as_view(), name = 'product_detail'),
     path('profile/', views.ProfileView.as_view(), name = 'profile_view'),
-    path('search/<int:object_id>/collection/',views.AddToCollectionView.as_view(), name='add_to_collection')]
-    # path('profile',views.ProfileView.as_view(), name='profile'),]
+    path('search/<int:object_id>/collection/',views.AddToCollectionView.as_view(), name='add_to_collection'),
+    path('search/<int:object_id>/borrow/',views.BorrowProductView.as_view(), name ='borrow_product'),
+]
 
-# ]+ static(settings.MEDIA_URL, document_root= settings.MEDIA_ROOT)
-urlpatterns += staticfiles_urlpatterns()
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
