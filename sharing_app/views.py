@@ -1,3 +1,5 @@
+from random import sample, randint
+
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
@@ -19,6 +21,7 @@ from sharing_app.models import Profile, Product
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.conf import settings
+from annoying.functions import get_object_or_None
 
 from sharing_app.templatetags.my_app_filters import ProductSearchFilter
 
@@ -196,70 +199,75 @@ class BorrowProductView(LoginRequiredMixin, View):
 			selected_city = form.cleaned_data['selected_city']
 			borrow_date = form.cleaned_data['borrow_date']
 			return_date = form.cleaned_data['return_date']
-			product = Product.objects.get(pk=object_id)
+			selected_product = Product.objects.get(pk=object_id)
 			logged_user = Profile.objects.get(pk=request.user.id)
-			product_owners= Profile.objects.filter(owned_product__id=object_id)
-			sharing_user = product_owners.filter(city=selected_city).exclude(id=logged_user.id).order_by('?').first()
+			owners = selected_product.profile_set.all()
+			owners_sel = owners.filter(city=selected_city).exclude(id=logged_user.id).order_by('?').first
+			this_usr = owners_sel.get.all()
 
-			# product_owners = product.profile_set.all()
-			# owner_sharing = Profile.objects.filter(id=product_owners.id)
+
+			user_city = Profile.objects.all().exclude(id=logged_user.id).filter(city=selected_city)
+			# objects = user_city.get.all()
+
+
+			print(this_usr.user.username)
+
+			random_id = randint(1, 1000)
+			# usr_from_city = selected_product.profile_set.all()
+			# owners = Profile.objects.filter(owned_product__id=object_id).filter(city=selected_city)
+			# sharing_user= owners.exclude(id=logged_user.id).get(id=random_id)
+			# sharing_user = usr_from_city
+			# Profile.objects.filter(city=selected_city).exclude(id=logged_user.id)
+			# sharing_user = owners.get(user_id=random_id)
+			# sharing_user = product_owners..get(city=selected_city).order_by('?').first()
+			# selected_city = form.cleaned_data['selected_city']
+			# borrow_date = form.cleaned_data['borrow_date']
+			# return_date = form.cleaned_data['return_date']
+			# selected_product = Product.objects.get(id=object_id)
+			# logged_user = Profile.objects.get(pk=request.user.id)
+			# owners = selected_product.profile_set.all()
+			# sharing_user = owners.exclude(id=logged_user.id).get(city=selected_city).order_by('?').first()
+			# owner_from_city= product_owners.get(city=selected_city).exclude(id=logged_user.id).order_by('?').first()
+			# sharing_user = Profile.objects.get(id=owner_from_city.id)
+			#
+			# sharing_user = owners_form_city.order_by
+
+			# players_from_city = Profile.objects.filter(city=selected_city)
+			# sharing_user= players_from_city.filter(owned_product__profile__user_id=players_from_city.id).exclude(id=logged_user.id)
+			# owners_from_city = users_from_city.owned_product.filter(id)
+			# # users_from_city = Profile.objects.filter(city=selected_city).exclude(id=logged_user.id)
+			# sharing_user = Profile.objects.filter(city=selected_city).filter(owned_product__name__exact=product.name).exclude(id=logged_user.id).order_by('?').first()
+			# # sharing_user = product_owners.filter(city=selected_city).exclude(id=logged_user.id).order_by('?').first()
+			#
+			# # product_owners = product.profile_set.all()
+			# # owner_sharing = Profile.objects.filter(id=product_owners.id)
 			# sharing_user = owner_sharing.filter(city=selected_city).exclude(id=logged_user.id).order_by('?').first()
 			# sharing_user = Profile.objects.get(pk=owner_sharing.id)
-			# sharing_user = Profile.objects.filter(city=selected_city).filter(owned_product=product.id).exclude(id=logged_user.id).order_by('?').first()
-			from_email = settings.EMAIL_HOST_USER
-			to_email = [from_email, sharing_user.user.email]
-
-			send_mail(
-				'Cześć! ',
-				get_template('email.html').render(
-					({
-						'logged_user': logged_user,
-						'product': product,
-						'borrow_date': borrow_date,
-						'return_date': return_date
-					})
-				),
-				from_email,
-				to_email,
-				fail_silently=True,
-			)
-			info = str('Twoja prośba o wypożyczenie gry została wysłana do użytkownika:' + sharing_user.user.username)
-			ctx = {
-
-				'info':info,
-				'sharing_user': sharing_user
-			}
+			# sharing_user = Profile.objects.filter(city=selected_city)..exclude(id=logged_user.id).order_by('?').first()
+			# from_email = settings.EMAIL_HOST_USER
+			# to_email = [from_email, sharing_user.user.email]
+			#
+			# send_mail(
+			# 	'Cześć! ',
+			# 	get_template('email.html').render(
+			# 		({
+			# 			'logged_user': logged_user,
+			# 			'selected_product': selected_product,
+			# 			'borrow_date': borrow_date,
+			# 			'return_date': return_date
+			# 		})
+			# 	),
+			# 	from_email,
+			# 	to_email,
+			# 	fail_silently=True,
+			# )
+			# info = str('Twoja prośba o wypożyczenie gry została wysłana do użytkownika:' + sharing_user.user.username)
+			# ctx = {
+			#
+			# 	'info':info,
+			# 	'sharing_user': sharing_user
+			# }
 		return render(request, 'success_borrow.html', ctx)
-	# template_name = 'borrow_product.html'
-	# form_class = ShareForm
-	#
-	# # success_url = '/thanks/'
-	#
-	# def get(self, request, object_id):
-	#
-	# def form_valid(self, form):
-	# 	selected_city = form.cleaned_data['city']
-	# 	borrow_date = form.cleaned_data['borrow_date']
-	# 	return_date = form.cleaned_data['return_date']
-	# 	product = Product.objects.get(pk=self.request.object.id)
-	# 	logged_user = Profile.objects.get(pk=self.request.user.id)
-	# 	sharing_user = Profile.objects.filter(city=selected_city).order_by('?').first()
-	# 	send_mail(
-	# 		'Cześć! ',
-	# 		get_template('email.html').render(
-	# 			Context({
-	# 				'logged_user': logged_user,
-	# 				'product': product,
-	# 				'borrow_date': borrow_date,
-	# 				'return_date': return_date,
-	# 			})
-	# 		),
-	# 		logged_user.email,
-	# 		sharing_user.email,
-	# 		fail_silently=True
-	# 	)
-	#
-	# 	return super().form_valid(form)
 
 class SuccessBorrowView(TemplateView):
 	template_name = 'success_borrow.html'
