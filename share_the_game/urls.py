@@ -32,7 +32,7 @@ urlpatterns = [
     path('add/',views.ProductAddView.as_view(), name='product_add'),
     # path('add/',views.ProductCreate.as_view(), name='product_add'),
     path('search/<int:object_id>/detail/', views.ProductDetailView.as_view(), name = 'product_detail'),
-    path('profile/', views.ProfileView.as_view(), name = 'profile_view'),
+    path('accounts/profile/', views.ProfileView.as_view(), name = 'profile_view'),
     path('search/<int:object_id>/collection/',views.AddToCollectionView.as_view(), name='add_to_collection'),
     path('search/<int:object_id>/borrow/',views.BorrowProductView.as_view(), name ='borrow_product'),
 ]

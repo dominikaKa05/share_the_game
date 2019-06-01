@@ -1,9 +1,10 @@
 {% extends 'base.html'%}
    {% load crispy_forms_tags %}
 {% block content %}
-
+{% if just_logged_out %}  You are successfully logged out {% endif %}
       <button> <a href="{% url 'login'%}"> Zaloguj się </a> </button>
     <button> <a href="{% url 'register'%}">Zarejestruj się </a></button>
+    <button> <a href="{% url 'product_search'%}">Przejdź do wyszukiwarki gier </a></button>
 
 
 {% endblock %}

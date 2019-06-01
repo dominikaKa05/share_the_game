@@ -5,19 +5,14 @@
 {% block content%}
     <h2>Profil użytkownika {{ request.user.username }}</h2>
 
-
-        <tr>
-            <td> Lista gier </td>
+            <h3> Kolekcja gier użytkownika: </h3>
+     <table>
              {% for product in user_products %}
-            <td>{{product.name}}
-{#                <img src="{{ product.image.url }}"> <a href="product_detail.html"></a></img> </td>#}
-
-        </tr>
-    {% endfor %}
-
+                 <tr>{{product.name}}
+                <a href={% url 'product_detail' product.id %}> <img src="{{ product.image.url }}" width="100" height="100"> </a> </tr>
+             {% endfor %}
     </table>
 
-
-</div>
+    <button> <a href="{% url 'logout'%}"> Wyloguj się </a></button>
 
 {% endblock %}
