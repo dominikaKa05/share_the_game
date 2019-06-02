@@ -76,6 +76,11 @@ class ProductAddForm(ModelForm):
 		fields = '__all__'
 
 class ShareForm(forms.Form):
-	selected_city = forms.CharField(label='Lokalizacja wypożyczenia(miejscowość)', max_length=100)
-	borrow_date = forms.DateField(label='Data wypożyczenia')
-	return_date =forms.DateField(label='Data zwrotu')
+	DELIVERY_CHOICES = (
+		('Odbiór osobisty', 'Odbiór osobisty'),
+		('Wysyłka (opłata przez osobę wypożyczają)','Wysyłka (opłatacana przez osobę wypożyczają)'))
+	selected_city = forms.CharField(label='Miejscowość zamieszkania wypożyczającego', max_length=100, required=False)
+	how_get = forms.ChoiceField(label= 'Wybierz sposoób dostarczenia gry', choices= DELIVERY_CHOICES, required=True)
+	delivery_adress = forms.CharField(label='Adres do wysyłki',required=False)
+	borrow_date = forms.DateField(label='Data wypożyczenia', required=True)
+	return_date =forms.DateField(label='Data zwrotu', required=True)

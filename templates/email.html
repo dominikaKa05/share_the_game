@@ -1,6 +1,10 @@
 Cześć!
 Użytkownik {{ logged_user.user.username }} chce wypożyczyć od Ciebie grę {{ product.name }}.
 Czas wypożyczenia to: {{ borrow_date }} - {{ return_date }}.
-Skontaktuj się z nim w celu ustalenia szczegółów wypożyczenia.
+Użytkownik jako sposób dostarczenia wybrał:  {{ how_get }}
+{% if  delivery_adress != '' %}
+Adres do wysyłki: {{ delivery_adress }}
+{% endif %}
+Skontaktuj się z użytkownikiem w celu ustalenia szczegółów wypożyczenia.
 Adres email użytkownika: {{ logged_user.user.email }}
 Niech inni poznają tę świetną grę! :)

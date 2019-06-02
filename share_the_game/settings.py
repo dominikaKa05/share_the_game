@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'sharing_app',
     'crispy_forms',
     'bootstrap4',
-    'annoying'
+    'django_random_queryset'
 ]
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 

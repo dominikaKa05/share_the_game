@@ -6,6 +6,8 @@ from django.contrib.auth.models import User, AbstractUser
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.encoding import smart_text
+from django_random_queryset import RandomManager
+
 
 class Product(models.Model):
 	CATEGORY_CHOICES = (
@@ -39,8 +41,9 @@ class Profile(models.Model):
 	city = models.CharField(max_length=120, verbose_name = 'Miasto zamieszkania')
 	owned_product = models.ManyToManyField(Product)
 
-	def __str__(self):
-		return smart_text(self.name)
+
+	# def __str__(self):
+	# 	return smart_text(self.user.username)
 
 	@receiver(post_save, sender=User)
 	def create_user_profile(sender, instance, created, **kwargs):
