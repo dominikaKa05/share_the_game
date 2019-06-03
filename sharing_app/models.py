@@ -8,7 +8,6 @@ from django.dispatch import receiver
 from django.utils.encoding import smart_text
 from django_random_queryset import RandomManager
 
-
 class Product(models.Model):
 	CATEGORY_CHOICES = (
 		('', 'Wybierz kategorię gry'),
@@ -33,13 +32,11 @@ class Product(models.Model):
 	image = models.FileField(null=True, blank=True)
 
 
-
-
 class Profile(models.Model):
 
 	user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 	city = models.CharField(max_length=120, verbose_name = 'Miasto zamieszkania')
-	owned_product = models.ManyToManyField(Product)
+	owned_product = models.ManyToManyField(Product, through= 'ProductProfile')
 
 
 	# def __str__(self):
@@ -53,4 +50,10 @@ class Profile(models.Model):
 	@receiver(post_save, sender=User)
 	def save_user_profile(sender, instance, **kwargs):
 		instance.profile.save()
+
+
+class ProductProfile(models.Model):
+	profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
+	product = models.ForeignKey(Product, on_delete=models.CASCADE)
+	user_have = models.BooleanField(default=True)
 

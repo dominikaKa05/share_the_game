@@ -1,18 +1,33 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
+{% load static %}
 {% load crispy_forms_tags %}
 
 {% block content%}
-    <h2>Profil użytkownika {{ request.user.username }}</h2>
+    <h2> Mój profil </h2>
+    <h3> Nazwa użytkownika: {{ request.user.username }}</h3>
 
-            <h3> Kolekcja gier użytkownika: </h3>
+            <h3> Moja kolekcja gier: </h3>
      <table>
              {% for product in user_products %}
-                 <tr>{{product.name}}
-                <a href={% url 'product_detail' product.id %}> <img src="{{ product.image.url }}" width="100" height="100"> </a> </tr>
+                 {% if selected_product.user_have == True %}
+                 <tr> <td>{{product.name}}</td>
+                     <td><a href={% url 'product_detail' product.id %}> <img src="{{ product.image.url }}" width="100" height="120"></a> </td>
+                     <td> <button> <a href={% url  'unavailable' product.id %}> Oznacz grę jako niedostępną </a> </button> </td>
+                     <td>  <button> <a href={% url 'available'  product.id %}> Oznacz grę jako dostępną </a> </button> </td> </tr>
+
+
+
+          {% else %}
+                      <tr> <td><strike>{{product.name}}</strike> (Gra obecnie niedostępna)</td>
+                        <td><a href={% url 'product_detail' product.id %}> <img src="{{ product.image.url }}" width="100" height="120"></a> </td>
+                         <td> <button> <a href={% url  'unavailable' product.id %}> Oznacz grę jako niedostępną </a> </button> </td>
+                        <td>  <button> <a href={% url 'available'  product.id %}> Oznacz grę jako dostępną </a> </button> </td> </tr>
+
+                 {% endif%}
              {% endfor %}
     </table>
 
-    <button> <a href="{% url 'logout'%}"> Wyloguj się </a></button>
+{#    <button> <a href="{% url 'logout'%}"> Wyloguj się </a></button>#}
 
 {% endblock %}

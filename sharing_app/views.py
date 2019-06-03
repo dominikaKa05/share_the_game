@@ -11,7 +11,7 @@ from django.views.generic.edit import FormView
 from search_views.views import SearchListView
 from share_the_game import settings
 from sharing_app.forms import RegisterForm, ProductSearchForm, ProductAddForm, ShareForm
-from sharing_app.models import Profile, Product
+from sharing_app.models import Profile, Product, ProductProfile
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.conf import settings
@@ -62,27 +62,6 @@ class LogoutView(View):
 
 
 
-# class ProductSearchView(FormView):
-# 	model = Product
-# 	template_name = 'product_search.html'
-# 	form_class = ProductSearchForm
-# 	def form_valid(self, form):
-# 		name =form.cleaned_data['name']
-# 		category = form.cleaned_data['category']
-# 		min_players = form.cleaned_data['min_number_of_players']
-# 		max_players_= form.cleaned_data ['max_number_of_players']
-# 		min_age = form.cleaned_data['min_age']
-# 		if name != "":
-# 			pass
-# 		if category != "":
-# 			pass
-# 		if min_players != "":
-# 			pass
-# 		if max_players_!= "":
-# 			pass
-# 		if min_age != "":
-# 			pass
-
 
 class ProductSearchListView(LoginRequiredMixin, SearchListView):
 	model = Product
@@ -95,11 +74,6 @@ class ProductSearchListView(LoginRequiredMixin, SearchListView):
 		product = Product.objects.all()
 		return render(request, "product_search.html", {'product': product})
 
-
-# class ProductAddView(LoginRequiredMixin, CreateView):
-# 	model = Product
-# 	template_name = 'product_form.html'
-#     fields = "__all__"
 
 class ProductAddView(LoginRequiredMixin, FormView, ):
 	model = Product
@@ -119,26 +93,12 @@ class ProductAddView(LoginRequiredMixin, FormView, ):
 		return redirect('product_detail', new_product.pk)
 
 
-# class ProductCreate(CreateView):
-# 	model = Product
-# 	fields = '__all__'
-
-
-# class ProfileView(View):
-# 	def get(self,request):
-# 		owner = request.user
-#
-# 		products = Product.objects.get(pk=request.user.id)
-# 		ctx = {
-# 			'products': products,
-# 			'owner': owner
-# 		}
-# 		return render(request, 'profile.html', ctx)
 
 class ProfileView(LoginRequiredMixin, View):
 	def get(self, request):
 		logged_user = Profile.objects.get(pk=request.user.id)
-		user_products = logged_user.owned_product.all()
+		user_products= logged_user.owned_product.all()
+		# user_products = ProductProfile.objects.filter(profile_id=logged_user.id)
 		ctx = {
 			'logged_user': logged_user,
 			'user_products': user_products
@@ -159,19 +119,25 @@ class ProductDetailView(LoginRequiredMixin, View):
 class AddToCollectionView(LoginRequiredMixin, View):
 
 	def get(self, request, object_id):
-		product = Product.objects.get(pk=object_id)
+		selected_product = Product.objects.get(pk=object_id)
 		logged_user = Profile.objects.get(pk=request.user.id)
-		logged_user.owned_product.add(product)
-		owner = product.profile_set.all()
+		user_product = logged_user.owned_product.add(selected_product)
+		# user_product = ProductProfile.(profile=logged_user, product=selected_product, user_have=True)
+		# new_product = logged_user.owned_product.get(id=object_id)
+		# new_product.owner_amount =1
+		# # product = logged_user.owned_product.get(id=object_id)
+
 		user_products = logged_user.owned_product.all()
 
 		ctx = {
-			'product': product,
-			'owner': owner,
+			'selected_product': selected_product,
 			'logged_user': logged_user,
-			'user_products': user_products
+			'user_products': user_products,
+			'user_product': user_product
+
 		}
 		return render(request, 'profile.html', ctx)
+
 
 
 class BorrowProductView(LoginRequiredMixin, View):
@@ -199,22 +165,10 @@ class BorrowProductView(LoginRequiredMixin, View):
 			if how_get == 'Odbiór osobisty':
 				owners_from_city = owners.filter(city=selected_city).exclude(id=logged_user.id)
 				sharing_user = random.choice(owners_from_city)
+				user_id = sharing_user.id
 			elif how_get == 'Wysyłka (opłata przez osobę wypożyczają)':
 				all_owners = owners.exclude(id=logged_user.id)
 				sharing_user = random.choice(all_owners)
-				_
-
-			# owners_from_city_id = owners.filter(city=selected_city).exclude(id=logged_user.id).values_list('user_id')
-
-			# if how_get =='Odbiór osobisty':
-			# 	owners_from_city_id = owners.filter(city=selected_city).exclude(id=logged_user.id).values_list('user_id')
-			# 	random_id = random.choice(owners_from_city_id)
-			# 	sharing_user = Profile.objects.get(id=random_id)
-				# sharing_user_email = sharing_user.values
-				# number = owners_from_city.count()
-				# # owners_from_city_list =[]
-
-
 
 			from_email = settings.EMAIL_HOST_USER
 			to_email = [from_email, sharing_user.user.email]
@@ -228,7 +182,8 @@ class BorrowProductView(LoginRequiredMixin, View):
 						'borrow_date': borrow_date,
 						'return_date': return_date,
 						'how_get': how_get,
-						'delivery_adress': delivery_adress
+						'delivery_adress': delivery_adress,
+						'sharing_user': sharing_user,
 					})
 				),
 				from_email,
@@ -244,7 +199,40 @@ class BorrowProductView(LoginRequiredMixin, View):
 		return render(request, 'success_borrow.html', ctx)
 
 
-class SuccessBorrowView(TemplateView):
+class SuccessBorrowView(LoginRequiredMixin,TemplateView):
 	template_name = 'success_borrow.html'
 
+
+class YouBorrowView(LoginRequiredMixin,View):
+	pass
+
+
+class UnavailableProductView(LoginRequiredMixin,View):
+	def get(self, request, object_id):
+		product = Product.objects.get(pk=object_id)
+		logged_user = Profile.objects.get(pk=request.user.id)
+		user_selected_product = Product.objects.get(id= product.id,profile__user_id=logged_user.id)
+		# user_selected_product = ProductProfile.objects.get(profile_id=logged_user.id,product_id=product.id)
+		user_selected_product.user_have = False
+		ctx = {
+			'user_selected_product': user_selected_product
+		}
+		return (request, 'main_page.html',ctx)
+
+
+class AvailableProductView(LoginRequiredMixin,View):
+	def get(self, request, object_id):
+		product = Product.objects.get(pk=object_id)
+		logged_user = Profile.objects.get(pk=request.user.id)
+		# user_selected_product = ProductProfile.objects.get(profile_id=logged_user.id,product_id=product.id)
+		user_selected_product = Product.objects.get(id= product.id,profile__user_id=logged_user.id)
+		user_selected_product_av = user_selected_product.
+		ctx = {
+			'user_selected_product': user_selected_product
+		}
+		return (request, 'main_page.html',ctx)
+
+
+
+#
 

@@ -73,7 +73,7 @@ class ProductSearchForm(forms.Form):
 class ProductAddForm(ModelForm):
 	class Meta:
 		model = Product
-		fields = '__all__'
+		exclude =['amount']
 
 class ShareForm(forms.Form):
 	DELIVERY_CHOICES = (
