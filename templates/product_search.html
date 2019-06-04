@@ -12,7 +12,8 @@
         <button class="btn" type="submit">Szukaj</button>
     </form>
 
-    <table class="table table-bordered table-condensed">
+    <table class="table table-bordered  table-hover" table-responsive{-sm|-md|-lg|-xl}>
+      <thead class="thead-light">
         <tr>
             <th>Tytuł</th>
             <th>Kategoria</th>
@@ -27,10 +28,10 @@
             <td>{{object.min_number_of_players}}</td>
             <td>{{object.max_number_of_players}}</td>
             <td>{{object.min_age}}</td>
+            <td> <img src='{{ object.image.url}}' alt="blaa" width="100" height="100"/> </td>
             <td> <button id='borrow'> <a href = {% url 'add_to_collection' object.pk %}>Dodaj grę do swojej kolekcji</a></button></td>
             <td> <button> <a href = {% url 'borrow_product' object.pk %}> Pożycz grę! </a></button></td>
-            <td> <img src='{{ object.image.url}}' alt="blaa" width="100" height="100"/> </td>
-{#        <td><img src="{% static "obejct.image.url" %}" alt=""></td>#}
+
 
 
         </tr>

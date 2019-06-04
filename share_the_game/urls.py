@@ -30,7 +30,6 @@ urlpatterns = [
     path('logout/', views.LogoutView.as_view(), name='logout'),
     path('search/',views.ProductSearchListView.as_view(), name='product_search'),
     path('add/',views.ProductAddView.as_view(), name='product_add'),
-    # path('add/',views.ProductCreate.as_view(), name='product_add'),
     path('search/<int:object_id>/detail/', views.ProductDetailView.as_view(), name = 'product_detail'),
     path('accounts/profile/', views.ProfileView.as_view(), name = 'profile_view'),
     path('accounts//profile/<int:object_id>', views.UnavailableProductView.as_view(), name = 'unavailable'),

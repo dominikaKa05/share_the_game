@@ -1,14 +1,17 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
 
-{% block title %} Logowanie {% endblock %}
-
 {% block content %}
     <form method="post" novalidate>
+
   <h2>Zaloguj się</h2>
   <form action='{% url 'login' %}' method="post">
     {% csrf_token %}
     {{ form|crispy }}
-    <button type="submit">Login</button>
+    <button type='submit' class="btn btn-light">Login</button>
   </form>
-{% endblock %}
+
+        <h3>Nie masz konta? Zarejestruj się</h3>
+    <button type="button" class="btn btn-light"><a href="{% url 'register'%}">Rejestracja</a></button>
+
+        {% endblock %}
