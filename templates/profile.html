@@ -7,27 +7,25 @@
     <h2> Mój profil </h2>
     <h3> Nazwa użytkownika: {{ request.user.username }}</h3>
 
+
             <h3> Moja kolekcja gier: </h3>
      <table>
              {% for product in user_products %}
-                 {% if selected_product.user_have == True %}
-                 <tr> <td>{{product.name}}</td>
-                     <td><a href={% url 'product_detail' product.id %}> <img src="{{ product.image.url }}" width="100" height="120"></a> </td>
-                     <td> <button> <a href={% url  'unavailable' product.id %}> Oznacz grę jako niedostępną </a> </button> </td>
-                     <td>  <button> <a href={% url 'available'  product.id %}> Oznacz grę jako dostępną </a> </button> </td> </tr>
+                 {% if product.user_have is True %}
+                 <tr> <td>{{product.product.name}}</td>
+                     <td><a href={% url 'product_detail' product.product.id %}> <img src="{{ product.product.image.url}}" width="100" height="120"></a> </td>
+                     <td> <button> <a href={% url  'unavailable' product.product.id %}> Oznacz grę jako niedostępną </a> </button> </td>
+                     <td>  <button> <a href={% url 'available'  product.product.id %}> Oznacz grę jako dostępną </a> </button> </td> </tr>
+               {% else %}
+                      <tr> <td><strike>{{product.product.name}}</strike> (Obecnie niedostępna)</td>
+                        <td><a href={% url 'product_detail' product.product.id %}> <img src="{{ product.product.image.url }}" width="100" height="120"></a> </td>
+                         <td> <button> <a href={% url  'unavailable' product.product.id %}> Oznacz grę jako niedostępną </a> </button> </td>
+                        <td>  <button> <a href={% url 'available'  product.product.id %}> Oznacz grę jako dostępną </a> </button> </td> </tr>
+             {% endif %}
+     {% endfor %}
 
-
-
-          {% else %}
-                      <tr> <td><strike>{{product.name}}</strike> (Gra obecnie niedostępna)</td>
-                        <td><a href={% url 'product_detail' product.id %}> <img src="{{ product.image.url }}" width="100" height="120"></a> </td>
-                         <td> <button> <a href={% url  'unavailable' product.id %}> Oznacz grę jako niedostępną </a> </button> </td>
-                        <td>  <button> <a href={% url 'available'  product.id %}> Oznacz grę jako dostępną </a> </button> </td> </tr>
-
-                 {% endif%}
-             {% endfor %}
     </table>
 
-{#    <button> <a href="{% url 'logout'%}"> Wyloguj się </a></button>#}
+    <button> <a href="{% url 'logout'%}"> Wyloguj się </a></button>
 
 {% endblock %}

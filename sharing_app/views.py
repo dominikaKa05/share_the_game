@@ -2,7 +2,7 @@ import random
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import request, HttpResponseRedirect
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.template.loader import get_template
 from django.urls import reverse_lazy
 from django.views import View
@@ -97,8 +97,11 @@ class ProductAddView(LoginRequiredMixin, FormView, ):
 class ProfileView(LoginRequiredMixin, View):
 	def get(self, request):
 		logged_user = Profile.objects.get(pk=request.user.id)
-		user_products= logged_user.owned_product.all()
+		user_products = ProductProfile.objects.all()
+		# user_products= logged_user.owned_product.all().order_by('profile__productprofile__product_id')
 		# user_products = ProductProfile.objects.filter(profile_id=logged_user.id)
+		# avability = ProductProfile.objects.get(profile=logged_user, product=)
+		# logged_user.owned_product.get(profile__productprofile__user_have=)
 		ctx = {
 			'logged_user': logged_user,
 			'user_products': user_products
@@ -122,6 +125,8 @@ class AddToCollectionView(LoginRequiredMixin, View):
 		selected_product = Product.objects.get(pk=object_id)
 		logged_user = Profile.objects.get(pk=request.user.id)
 		user_product = logged_user.owned_product.add(selected_product)
+
+
 		# user_product = ProductProfile.(profile=logged_user, product=selected_product, user_have=True)
 		# new_product = logged_user.owned_product.get(id=object_id)
 		# new_product.owner_amount =1
@@ -211,28 +216,28 @@ class UnavailableProductView(LoginRequiredMixin,View):
 	def get(self, request, object_id):
 		product = Product.objects.get(pk=object_id)
 		logged_user = Profile.objects.get(pk=request.user.id)
-		user_selected_product = Product.objects.get(id= product.id,profile__user_id=logged_user.id)
-		# user_selected_product = ProductProfile.objects.get(profile_id=logged_user.id,product_id=product.id)
-		user_selected_product.user_have = False
+		# user_selected_product = Product.objects.get(id= product.id,profile__user_id=logged_user.id)
+		user_selected_product = ProductProfile.objects.get(product_id=object_id, profile_id=request.user.id)
+		# user_selected_product.save(update_fields=['user_have'])
+		user_products = ProductProfile.objects.all()
+		ProductProfile.objects.filter(pk=user_selected_product.id).update(user_have=False)
 		ctx = {
-			'user_selected_product': user_selected_product
+			'user_selected_product': user_selected_product,
+			'user_products': user_products,
 		}
-		return (request, 'main_page.html',ctx)
+		return render(request, 'profile.html',ctx)
 
 
 class AvailableProductView(LoginRequiredMixin,View):
 	def get(self, request, object_id):
 		product = Product.objects.get(pk=object_id)
 		logged_user = Profile.objects.get(pk=request.user.id)
-		# user_selected_product = ProductProfile.objects.get(profile_id=logged_user.id,product_id=product.id)
-		user_selected_product = Product.objects.get(id= product.id,profile__user_id=logged_user.id)
-		user_selected_product_av = user_selected_product.
+		user_selected_product = ProductProfile.objects.get(product_id=object_id, profile_id=request.user.id)
+		# user_selected_product.save(update_fields=['user_have'])
+		user_products = ProductProfile.objects.all()
+		ProductProfile.objects.filter(pk=user_selected_product.id).update(user_have=True)
 		ctx = {
-			'user_selected_product': user_selected_product
+			'user_selected_product': user_selected_product,
+			'user_products': user_products,
 		}
-		return (request, 'main_page.html',ctx)
-
-
-
-#
-
+		return render(request, 'profile.html', ctx)
