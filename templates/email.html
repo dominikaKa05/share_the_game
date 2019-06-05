@@ -1,5 +1,5 @@
 Cześć {{ sharing_user.user.username }}!
-Użytkownik {{ logged_user.user.username }} chce wypożyczyć od Ciebie grę {{ product.name }}.
+Użytkownik {{ logged_user.user.username }} chce wypożyczyć od Ciebie grę "{{ selected_product.name }}".
 Czas wypożyczenia to: {{ borrow_date }} - {{ return_date }}.
 Użytkownik jako sposób dostarczenia wybrał:  {{ how_get }}
 {% if  delivery_adress != '' %}
@@ -10,3 +10,6 @@ Adres email użytkownika: {{ logged_user.user.email }}
 Niech inni poznają tę świetną grę! :)
 
 Jeśli chcesz wypożyczyć grę {{ logged_user.user.username }} oznacz ją jako niedostępną dla innych użytkowników na swoim profilu
+
+ http://127.0.0.1:8000{% url 'unavailable' object_id %} -  Oznacz grę jako wypożyczoną
+{#<a href="https://yoursite.com{% url 'mail_view' pk %}">Click</a>#}

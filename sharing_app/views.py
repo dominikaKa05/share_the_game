@@ -1,6 +1,7 @@
 import random
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.messages.storage import session
 from django.http import request, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.template.loader import get_template
@@ -54,11 +55,10 @@ class RegisterView(FormView):
 		return render(self.request, 'main_page.html', {'form': form})
 
 
-class LogoutView(View):
-	def get(self, request):
-		logout(request)
-		# session['just_logged_out'] = True
-		return HttpResponseRedirect('/')
+# class LogoutView(View):
+# 	def get(self, request):
+# 		logout(request)
+# 		return HttpResponseRedirect('/')
 
 
 
@@ -177,7 +177,7 @@ class BorrowProductView(LoginRequiredMixin, View):
 			selected_product = Product.objects.get(pk=object_id)
 			logged_user = Profile.objects.get(pk=request.user.id)
 			# owners = selected_product.profile_set.all()
-			owners = ProductProfile.objects.get(profile_id=selected_product.id)
+			owners = ProductProfile.objects.filter(profile_id=selected_product.id)
 			if how_get == 'Odbiór osobisty':
 				# owners_from_city = owners.filter(city=selected_city).exclude(id=logged_user.id)
 				# owners_from_city = owners.filter(profile__city=selected_city).exclude(profile_id=logged_user.id)
@@ -202,6 +202,7 @@ class BorrowProductView(LoginRequiredMixin, View):
 						'how_get': how_get,
 						'delivery_adress': delivery_adress,
 						'sharing_user': sharing_user,
+						'object_id': object_id
 					})
 				),
 				from_email,
@@ -222,8 +223,12 @@ class SuccessBorrowView(LoginRequiredMixin,TemplateView):
 	template_name = 'success_borrow.html'
 
 
-class YouBorrowView(LoginRequiredMixin,View):
-	pass
+# class MarkAsUnavView(LoginRequiredMixin,View):
+# 	login_url = '/login/'
+# 	def get(self,request,object_id):
+# 		logged_user = Profile.objects.get(pk=request.user.id)
+# 		user_product = ProductProfile.objects.get(profile__user_id=logged_user.id,product_id=object_id)
+# 		user_product.
 
 
 class UnavailableProductView(LoginRequiredMixin,View):

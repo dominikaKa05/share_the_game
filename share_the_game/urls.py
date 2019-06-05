@@ -16,27 +16,28 @@ Including another URLconf
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
-from django.contrib.auth.views import LogoutView, LoginView
+from django.contrib.auth.views import LogoutView, LoginView, PasswordResetCompleteView, PasswordResetView
 from sharing_app import views
 from share_the_game import settings
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+	path('accounts/',include('django.contrib.auth.urls')),
     path('', views.MainPageView.as_view(), name = 'main_page'),
     path('register/', views.RegisterView.as_view(), name='register'),
     path('login/',LoginView.as_view(), name='login'),
+	# path('password_reset/', PasswordResetView.as_view(), name='password_reset'),
     # path('logout/', LogoutView.as_view(), {'template_name': '/logout.html'},name= 'logout'),
-    path('logout/', views.LogoutView.as_view(), name='logout'),
+    # path('logout/', views.LogoutView.as_view(), name='logout'),
     path('search/',views.ProductSearchListView.as_view(), name='product_search'),
     path('add/',views.ProductAddView.as_view(), name='product_add'),
     path('search/<int:object_id>/detail/', views.ProductDetailView.as_view(), name = 'product_detail'),
     path('accounts/profile/', views.ProfileView.as_view(), name = 'profile_view'),
-    path('accounts//profile/<int:object_id>', views.UnavailableProductView.as_view(), name = 'unavailable'),
+    path('accounts/profile/<int:object_id>', views.UnavailableProductView.as_view(), name = 'unavailable'),
     path('accounts/profile/<int:object_id>/', views.AvailableProductView.as_view(), name='available'),
     path('search/<int:object_id>/collection/',views.AddToCollectionView.as_view(), name='add_to_collection'),
     path('search/<int:object_id>/borrow/',views.BorrowProductView.as_view(), name ='borrow_product'),
-    path('you_borrow/<int:user_id>/',views.YouBorrowView.as_view(), name='you_borrow'),
 
 ]
 
