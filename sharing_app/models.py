@@ -9,6 +9,12 @@ from django.utils.encoding import smart_text
 from django_random_queryset import RandomManager
 
 class Product(models.Model):
+	STATUS_CHOOICES = (
+		('added','added'),
+		('pending','pending'),
+		('deleted', 'deleted'),
+		('withdraw', 'withdraw')
+	)
 	CATEGORY_CHOICES = (
 		('', 'Wybierz kategorię gry'),
 		('strategiczna', 'strategiczna'),
@@ -30,6 +36,8 @@ class Product(models.Model):
 	max_number_of_players = models.IntegerField(blank=True, verbose_name='Maksymalna liczba graczy', default=0)
 	min_age = models.IntegerField(blank=True, verbose_name='Minimalny wiek gracza',default=0)
 	image = models.FileField(null=True, blank=True)
+	status = models.CharField(max_length=120,choices=STATUS_CHOOICES, default='pending')
+
 
 
 class Profile(models.Model):

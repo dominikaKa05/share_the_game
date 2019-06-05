@@ -82,7 +82,9 @@ class ProductAddView(LoginRequiredMixin, FormView, ):
 	template_name = 'product_form.html'
 	form_class = ProductAddForm
 
+
 	def form_valid(self, form):
+		product_add_form = form
 		new_product = Product()
 		new_product.name = form.cleaned_data['name']
 		new_product.category = form.cleaned_data['category']
@@ -91,8 +93,11 @@ class ProductAddView(LoginRequiredMixin, FormView, ):
 		new_product.max_number_of_players = form.cleaned_data['max_number_of_players']
 		new_product.min_age = form.cleaned_data['min_age']
 		new_product.image = self.request.FILES['image']
+		new_product.status = 'pending'
 		new_product.save()
-		return redirect('product_detail', new_product.pk)
+		# product_add_form.save(commit=False)
+		# return redirect('product_detail', new_product.pk)
+		return redirect('main_page')
 
 
 
