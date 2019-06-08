@@ -3,6 +3,8 @@
 {% load bootstrap4 %}
 {% block content %}
 
+     <button type="button" class="btn btn-outline-info btn-lg"> <a href="{% url 'product_add' %}"> Dodaj grę do naszej bazy </a></button>
+
 <div class="container">
 
     <h2> Wyszukiwarka gier</h2>
@@ -16,6 +18,7 @@
       <thead class="thead-light">
         <tr>
             <th>Tytuł</th>
+            <br>
             <th>Kategoria</th>
             <th>Minimalna liczba graczy</th>
             <th>Maksymalna liczba graczy</th>
@@ -39,11 +42,8 @@
         {% endfor %}
     </table>
 
-{#    {% if is_paginated %}#}
-{#        {% include "paginator.html" %}#}
-{#    {% endif %}#}
 
 </div>
-        <button> <a href="{% url 'product_add' %}"> Dodaj grę do naszej bazy </a></button>
+
 
 {% endblock %}

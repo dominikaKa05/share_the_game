@@ -6,15 +6,13 @@
 
 
 <div class = 'product_data'>
-    <h1>{{ product.name }}</h1>
-    <p>{{ product.category }}</p>
-    <p>{{ product.description|linebreaks  }}</p>
+    <h1 class="text-center">{{ product.name }}</h1>
+    <h4 class="text-center font-italic">Gra {{ product.category }}</h4>
+    <p class="text-justify">{{ product.description|linebreaks  }}</p>
     {% if product.image.url != "" %}
-    <img src= '{{ product.image.url }}' class='img-respo' alt="img"/>
+    <img class="rounded mx-auto d-block" src= '{{ product.image.url }}' class='img-respo' alt="img" style="max-width: 400px; max-heigh: 400px"/>
     {% endif %}
 
 </div>
-
-{#    <button><a href="{% url 'add_to_collection' %}" >Dodaj grę do swojej kolekcji</a></button>#}
 
 {% endblock %}

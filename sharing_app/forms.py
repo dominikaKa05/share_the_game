@@ -68,4 +68,3 @@ class ShareForm(forms.Form):
 								  widget=forms.DateInput(attrs={'placeholder': 'YYYY-MM-DD'}))
 	return_date = forms.DateField(label='Data zwrotu', required=True,
 								  widget=forms.DateInput(attrs={'placeholder': 'YYYY-MM-DD'}))
-

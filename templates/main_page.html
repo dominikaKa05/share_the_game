@@ -1,16 +1,8 @@
 {% extends 'base.html'%}
    {% load crispy_forms_tags %}
-{% load static %}
+{% load static%}
 {% block content %}
-{% if user.is_not_authenticated %}
-{#  {{ user.username }}#}
-{#  <p><a href="{% url 'logout' %}"> Zostałeś poprawnie zalogowany</a></p>#}
-{#{% else %}#}
-  <p>You are not logged in</p>
-  <a href="{% url 'login' %}"> </a>
-{% endif %}
-
- <img src="media_cdn/czarneh_ep_102263.109474.800x0.jpg">
+<img src="{% static "sharing_app/blur-board-game-cards-776654.jpg" %}" alt="My image" class="mw-100">
 
 {% endblock %}
 
