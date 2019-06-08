@@ -138,7 +138,6 @@ class AddToCollectionView(LoginRequiredMixin, View):
 		return render(request, 'main_page.html', ctx)
 
 
-
 class BorrowProductView(LoginRequiredMixin, View):
 	login_url = '/login/'
 
@@ -159,50 +158,57 @@ class BorrowProductView(LoginRequiredMixin, View):
 			return_date = form.cleaned_data['return_date']
 			how_get = form.cleaned_data['how_get']
 			delivery_adress = form.cleaned_data['delivery_adress']
-			if borrow_date < datetime.datetime.now().date() or return_date <= borrow_date or return_date < datetime.datetime.now().date() :
+			selected_product = Product.objects.get(pk=object_id)
+			logged_user = Profile.objects.get(pk=request.user.id)
+			if borrow_date < datetime.datetime.now().date() or return_date <= borrow_date or return_date < datetime.datetime.now().date():
 				raise ValidationError('Data jest niepoprawna')
 			else:
-				selected_product = Product.objects.get(pk=object_id)
-				logged_user = Profile.objects.get(pk=request.user.id)
-				owners = ProductProfile.objects.filter(profile_id=selected_product.id)
 				if how_get == 'Odbiór osobisty':
 					owners_from_city = ProductProfile.objects.filter(profile__city=selected_city, product_id=object_id, user_have=True).exclude(profile_id=logged_user.id)
 					sharing_user = random.choice(owners_from_city)
-				# user_id = sharing_user.id
-				elif how_get == 'Wysyłka (opłata przez osobę wypożyczają)':
-					all_owners = owners.exclude(id=logged_user.id)
-					sharing_user = random.choice(all_owners)
+					from_email = settings.EMAIL_HOST_USER
+					to_email = [from_email, sharing_user.profile.user.email]
+					send_mail(
+						'Cześć! ',
+						get_template('email.html').render(
+							({
+								'logged_user': logged_user,
+								'selected_product': selected_product,
+								'borrow_date': borrow_date,
+								'return_date': return_date,
+								'how_get': how_get,
+								'delivery_adress': delivery_adress,
+								'sharing_user': sharing_user,
+							})
+						),
+						from_email,
+						to_email,
+						fail_silently=True,
+					)
+				else:
+					owners_all = ProductProfile.objects.filter( product_id=object_id, user_have=True).exclude(profile_id=logged_user.id)
+					sharing_user = random.choice(owners_all)
+					from_email = settings.EMAIL_HOST_USER
+					to_email = [from_email, sharing_user.profile.user.email]
+					send_mail(
+						'Cześć! ',
+						get_template('email.html').render(
+							({
+								'logged_user': logged_user,
+								'selected_product': selected_product,
+								'borrow_date': borrow_date,
+								'return_date': return_date,
+								'how_get': how_get,
+								'delivery_adress': delivery_adress,
+								'sharing_user': sharing_user,
+							})
+						),
+						from_email,
+						to_email,
+						fail_silently=True,
+					)
 
-			from_email = settings.EMAIL_HOST_USER
-			to_email = [from_email, sharing_user.profile.user.email]
-
-			send_mail(
-				'Cześć!',
-				get_template('email.html').render(
-					({
-						'logged_user': logged_user,
-						'selected_product': selected_product,
-						'borrow_date': borrow_date,
-						'return_date': return_date,
-						'how_get': how_get,
-						'delivery_adress': delivery_adress,
-						'sharing_user': sharing_user,
-						'object_id': object_id
-					})
-				),
-				from_email,
-				to_email,
-				fail_silently=True,
-				)
-
-		ctx = {
-				# 'selected_city':selected_city,
-				# 'owners': owners,
-				'sharing_user':sharing_user
-				}
-
-		return render(request, 'success_borrow.html', ctx)
-
+				return render(request, 'success_borrow.html', {'sharing_user':sharing_user})
 
 class SuccessBorrowView(LoginRequiredMixin,TemplateView):
 	login_url = '/login/'

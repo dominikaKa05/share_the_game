@@ -1,11 +1,9 @@
 import unittest
 
 from django.contrib.auth.models import User
-from django.http import response
 from django.test import Client
 from django.urls import reverse
-from sharing_app.models import Product, Profile, ProductProfile
-from sharing_app.forms import ShareForm
+from sharing_app.models import Product
 
 class ProfileVIewTest(unittest.TestCase):
 	def setUp(self):
