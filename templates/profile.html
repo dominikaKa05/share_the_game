@@ -13,13 +13,17 @@
              {% for product in user_products %}
                  {% if product.user_have is True %}
                  <tr> <td>{{product.product.name}}</td>
+                      {% if product.product.image.url != "" %}
                      <td><a href={% url 'product_detail' product.product.id %}> <img src="{{ product.product.image.url}}" width="100" height="120"></a> </td>
+                          {% endif %}
                      <td> <button> <a href={% url  'unavailable' product.product.id %}> Oznacz grę jako niedostępną </a> </button> </td>
                      <td>  <button> <a href={% url 'available'  product.product.id %}> Oznacz grę jako dostępną </a> </button> </td> </tr>
 
                  {% elif product.user_have is False %}
                       <tr> <td><strike>{{product.product.name}}</strike> (Obecnie niedostępna)</td>
+                           {% if product.product.image.url != "" %}
                         <td><a href={% url 'product_detail' product.product.id %}> <img src="{{ product.product.image.url }}" width="100" height="120"></a> </td>
+                               {% endif %}
                          <td> <button> <a href={% url  'unavailable' product.product.id %}> Oznacz grę jako niedostępną </a> </button> </td>
                         <td>  <button> <a href={% url 'available'  product.product.id %}> Oznacz grę jako dostępną </a> </button> </td> </tr>
                  {% endif %}

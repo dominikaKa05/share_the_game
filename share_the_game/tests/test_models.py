@@ -35,22 +35,6 @@ class ProductModelTestCase(TestCase):
 		self.game = None
 
 
-# class ProductProfileTestCase(TestCase):
-# 	def setUp(self):
-# 		self.product = Product.objects.create(name='gierka', category='karciana', description='najlepsza',min_number_of_players=4)
-# 		self.user = User.objects.create(username='Antek',email='a@gmail.com', password='fajnyanten')
-# 		self.profile = Profile.objects.create(city='Bydgoszcz',user_id=self.user.id,)
-# 		self.connection = ProductProfile.objects.create(product_id=self.product.id, profile_id=self.user.id)
-#
-# 	def test_city(self):
-# 		self.assertEqual(self.connection.product.name, 'gierka')
-#
-# 	def tearDown(self) -> None:
-# 		self.product = None
-# 		self.user = None
-# 		self.profile = None
-# 		self.connection = None
-# #
 
 class SimpleTest(unittest.TestCase):
 	def setUp(self):

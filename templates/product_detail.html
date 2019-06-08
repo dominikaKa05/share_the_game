@@ -9,7 +9,9 @@
     <h1>{{ product.name }}</h1>
     <p>{{ product.category }}</p>
     <p>{{ product.description|linebreaks  }}</p>
-    <img src= '{{ product.image.url }}' class='img-respo'/>
+    {% if product.image.url != "" %}
+    <img src= '{{ product.image.url }}' class='img-respo' alt="img"/>
+    {% endif %}
 
 </div>
 
