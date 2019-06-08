@@ -179,6 +179,7 @@ class BorrowProductView(LoginRequiredMixin, View):
 								'how_get': how_get,
 								'delivery_adress': delivery_adress,
 								'sharing_user': sharing_user,
+								'object_id': object_id
 							})
 						),
 						from_email,
@@ -186,7 +187,7 @@ class BorrowProductView(LoginRequiredMixin, View):
 						fail_silently=True,
 					)
 				else:
-					owners_all = ProductProfile.objects.filter( product_id=object_id, user_have=True).exclude(profile_id=logged_user.id)
+					owners_all = ProductProfile.objects.filter(product_id=object_id, user_have=True).exclude(profile_id=logged_user.id)
 					sharing_user = random.choice(owners_all)
 					from_email = settings.EMAIL_HOST_USER
 					to_email = [from_email, sharing_user.profile.user.email]
@@ -201,6 +202,7 @@ class BorrowProductView(LoginRequiredMixin, View):
 								'how_get': how_get,
 								'delivery_adress': delivery_adress,
 								'sharing_user': sharing_user,
+								'object_id':object_id
 							})
 						),
 						from_email,
