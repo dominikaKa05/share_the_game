@@ -2,10 +2,12 @@ import random
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.storage import session
+from django.core.exceptions import ValidationError
 from django.http import request, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.template.loader import get_template
 from django.urls import reverse_lazy
+import datetime
 from django.views import View
 from django.views.generic import TemplateView
 from django.views.generic.edit import FormView
@@ -55,13 +57,6 @@ class RegisterView(FormView):
 		return render(self.request, 'main_page.html', {'form': form})
 
 
-# class LogoutView(View):
-# 	def get(self, request):
-# 		logout(request)
-# 		return HttpResponseRedirect('/')
-
-
-
 
 class ProductSearchListView(LoginRequiredMixin, SearchListView):
 	login_url = '/login/'
@@ -84,7 +79,7 @@ class ProductAddView(LoginRequiredMixin, FormView, ):
 
 
 	def form_valid(self, form):
-		product_add_form = form
+		# product_add_form = form
 		new_product = Product()
 		new_product.name = form.cleaned_data['name']
 		new_product.category = form.cleaned_data['category']
@@ -106,10 +101,6 @@ class ProfileView(LoginRequiredMixin, View):
 	def get(self, request):
 		logged_user = Profile.objects.get(pk=request.user.id)
 		user_products = ProductProfile.objects.filter(profile__user_id=logged_user.id)
-		# user_products= logged_user.owned_product.all().order_by('profile__productprofile__product_id')
-		# user_products = ProductProfile.objects.filter(profile_id=logged_user.id)
-		# avability = ProductProfile.objects.get(profile=logged_user, product=)
-		# logged_user.owned_product.get(profile__productprofile__user_have=)
 		ctx = {
 			'logged_user': logged_user,
 			'user_products': user_products
@@ -135,12 +126,6 @@ class AddToCollectionView(LoginRequiredMixin, View):
 		selected_product = Product.objects.get(pk=object_id)
 		logged_user = Profile.objects.get(pk=request.user.id)
 		user_product = logged_user.owned_product.add(selected_product)
-
-		# user_product = ProductProfile.(profile=logged_user, product=selected_product, user_have=True)
-		# new_product = logged_user.owned_product.get(id=object_id)
-		# new_product.owner_amount =1
-		# # product = logged_user.owned_product.get(id=object_id)
-
 		user_products = logged_user.owned_product.all()
 
 		ctx = {
@@ -174,25 +159,25 @@ class BorrowProductView(LoginRequiredMixin, View):
 			return_date = form.cleaned_data['return_date']
 			how_get = form.cleaned_data['how_get']
 			delivery_adress = form.cleaned_data['delivery_adress']
-			selected_product = Product.objects.get(pk=object_id)
-			logged_user = Profile.objects.get(pk=request.user.id)
-			# owners = selected_product.profile_set.all()
-			owners = ProductProfile.objects.filter(profile_id=selected_product.id)
-			if how_get == 'Odbiór osobisty':
-				# owners_from_city = owners.filter(city=selected_city).exclude(id=logged_user.id)
-				# owners_from_city = owners.filter(profile__city=selected_city).exclude(profile_id=logged_user.id)
-				owners_from_city = ProductProfile.objects.filter(profile__city=selected_city, product_id=object_id, user_have=True).exclude(profile_id=logged_user.id)
-				sharing_user = random.choice(owners_from_city)
-				user_id = sharing_user.id
-			elif how_get == 'Wysyłka (opłata przez osobę wypożyczają)':
-				all_owners = owners.exclude(id=logged_user.id)
-				sharing_user = random.choice(all_owners)
+			if borrow_date < datetime.datetime.now().date() or return_date <= borrow_date or return_date < datetime.datetime.now().date() :
+				raise ValidationError('Data jest niepoprawna')
+			else:
+				selected_product = Product.objects.get(pk=object_id)
+				logged_user = Profile.objects.get(pk=request.user.id)
+				owners = ProductProfile.objects.filter(profile_id=selected_product.id)
+				if how_get == 'Odbiór osobisty':
+					owners_from_city = ProductProfile.objects.filter(profile__city=selected_city, product_id=object_id, user_have=True).exclude(profile_id=logged_user.id)
+					sharing_user = random.choice(owners_from_city)
+				# user_id = sharing_user.id
+				elif how_get == 'Wysyłka (opłata przez osobę wypożyczają)':
+					all_owners = owners.exclude(id=logged_user.id)
+					sharing_user = random.choice(all_owners)
 
 			from_email = settings.EMAIL_HOST_USER
 			to_email = [from_email, sharing_user.profile.user.email]
 
 			send_mail(
-				'Cześć! ',
+				'Cześć!',
 				get_template('email.html').render(
 					({
 						'logged_user': logged_user,
@@ -208,13 +193,14 @@ class BorrowProductView(LoginRequiredMixin, View):
 				from_email,
 				to_email,
 				fail_silently=True,
-			)
+				)
 
-			ctx = {
-				'selected_city':selected_city,
-				'owners':owners,
-				'sharing_user': sharing_user,
-			}
+		ctx = {
+				# 'selected_city':selected_city,
+				# 'owners': owners,
+				'sharing_user':sharing_user
+				}
+
 		return render(request, 'success_borrow.html', ctx)
 
 
@@ -223,22 +209,12 @@ class SuccessBorrowView(LoginRequiredMixin,TemplateView):
 	template_name = 'success_borrow.html'
 
 
-# class MarkAsUnavView(LoginRequiredMixin,View):
-# 	login_url = '/login/'
-# 	def get(self,request,object_id):
-# 		logged_user = Profile.objects.get(pk=request.user.id)
-# 		user_product = ProductProfile.objects.get(profile__user_id=logged_user.id,product_id=object_id)
-# 		user_product.
-
-
 class UnavailableProductView(LoginRequiredMixin,View):
 	login_url = '/login/'
 	def get(self, request, object_id):
 		product = Product.objects.get(pk=object_id)
 		logged_user = Profile.objects.get(pk=request.user.id)
-		# user_selected_product = Product.objects.get(id= product.id,profile__user_id=logged_user.id)
 		user_selected_product = ProductProfile.objects.get(product_id=object_id, profile_id=request.user.id)
-		# user_selected_product.save(update_fields=['user_have'])
 		user_products = ProductProfile.objects.filter(profile__user_id=logged_user.id)
 		ProductProfile.objects.filter(pk=user_selected_product.id).update(user_have=False)
 		ctx = {
@@ -254,7 +230,6 @@ class AvailableProductView(LoginRequiredMixin,View):
 		product = Product.objects.get(pk=object_id)
 		logged_user = Profile.objects.get(pk=request.user.id)
 		user_selected_product = ProductProfile.objects.get(product_id=object_id, profile_id=request.user.id)
-		# user_selected_product.save(update_fields=['user_have'])
 		user_products = ProductProfile.objects.filter(profile__user_id=logged_user.id)
 		ProductProfile.objects.filter(pk=user_selected_product.id).update(user_have=True)
 		ctx = {
