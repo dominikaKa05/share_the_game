@@ -2,6 +2,7 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
+    <div class="add">
     <h2> Dodaj grę do naszej bazy </h2>
 
 <form action='{% url 'product_add' %}' method='post' enctype="multipart/form-data">
@@ -10,4 +11,5 @@
          <button type='submit'> Dodaj </button>
     </form>
     <p>Gra pojawi się w naszej bazie po zaakceptowaniu przez administratora</p>
+    </div>
 {% endblock %}

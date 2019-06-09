@@ -1,14 +1,18 @@
 {% extends "base.html" %}
 {% load staticfiles %}
 {% load crispy_forms_tags %}
-
+<style>
+div {
+  margin-left: 100px;
+  margin-bottom: 100px;}
+</style>
 {% block content%}
 
 
 <div class = 'product_data'>
     <h1 class="text-center">{{ product.name }}</h1>
     <h4 class="text-center font-italic">Gra {{ product.category }}</h4>
-    <p class="text-justify">{{ product.description|linebreaks  }}</p>
+    <div class="text-justify m-l-1" style="margin: 25px ">{{ product.description|linebreaks  }}</div>
     {% if product.image.url != "" %}
     <img class="rounded mx-auto d-block" src= '{{ product.image.url }}' class='img-respo' alt="img" style="max-width: 400px; max-heigh: 400px"/>
     {% endif %}
