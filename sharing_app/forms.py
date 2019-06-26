@@ -1,11 +1,9 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from django.core.exceptions import ValidationError
-from django.forms import ModelForm, PasswordInput, SelectDateWidget
+from django.contrib.auth.forms import UserCreationForm
+from django.forms import ModelForm
 from django.contrib.auth.models import User
-import datetime
 
-from .models import Profile, Product
+from .models import Product
 
 
 class RegisterForm(UserCreationForm):
@@ -69,18 +67,4 @@ class ShareForm(forms.Form):
 	return_date = forms.DateField(label='Data zwrotu', required=True,
 								  widget=forms.DateInput(attrs={'placeholder': 'YYYY-MM-DD'}))
 
-	# def clean(self):
-	# 	cleaned_data = super(ShareForm, self).clean()
-	# 	# here all fields have been validated individually,
-	# 	# and so cleaned_data is fully populated
-	# 	borrow_date = cleaned_data.get('borrow_date')
-	# 	return_date = cleaned_data.get('return_date')
-	# 	if borrow_date and return_date:
-	# 		if borrow_date < datetime.datetime.now().date() or return_date < datetime.datetime.now().date():
-	# 			msg = u"Daty nie mogą być z przeszłości !"
-	# 			self.add_error('borrow_date',msg)
-	# 		if return_date < datetime.datetime.now().date():
-	# 			msg = u"Data zwrotu nie może być wcześniejsza niż wypożyczenia"
-	# 			self.add_error('return_date',msg)
-	# 	return cleaned_data
 

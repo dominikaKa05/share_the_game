@@ -1,13 +1,8 @@
 import random
-
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.messages.storage import session
-from django.core.exceptions import ValidationError
-from django.http import request, HttpResponseRedirect
-from django.shortcuts import render, redirect, get_object_or_404, render_to_response
-from django.template import RequestContext
+from django.shortcuts import render, redirect
 from django.template.loader import get_template
 from django.urls import reverse_lazy
 import datetime
@@ -20,9 +15,8 @@ from sharing_app.forms import RegisterForm, ProductSearchForm, ProductAddForm, S
 from sharing_app.models import Profile, Product, ProductProfile
 from django.core.mail import send_mail
 from django.conf import settings
-import logging
 from sharing_app.templatetags.my_app_filters import ProductSearchFilter
-from django.utils.translation import ugettext as _
+
 
 
 class MainPageView(View):
@@ -167,7 +161,6 @@ class BorrowProductView(LoginRequiredMixin, View):
 				if how_get == 'Odbiór osobisty':
 					owners_from_city = ProductProfile.objects.filter(profile__city=selected_city, product_id=object_id,
 																	 user_have=True).exclude(profile_id=logged_user.id)
-					# sharing_user = random.choice(owners_from_city)
 					if not owners_from_city:
 						ctx = {'form': ShareForm()}
 						messages.error(request,

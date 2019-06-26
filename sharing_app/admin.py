@@ -17,7 +17,6 @@ class ProductAdmin(admin.ModelAdmin):
 
 	def accept_product(modeladmin, request, queryset):
 		queryset.update(status='accepted')
-		# modeladmin.accept_product.short_description = "Zaakceptuj produkt"
 		if 'do_action' in request.POST:
 			form = ProductAddForm(request.POST)
 			if form.is_valid():
