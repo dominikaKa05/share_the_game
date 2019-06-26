@@ -6,7 +6,7 @@ from django.contrib.auth.models import User, AbstractUser
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.encoding import smart_text
-from django_random_queryset import RandomManager
+
 
 class Product(models.Model):
 	STATUS_CHOOICES = (

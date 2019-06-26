@@ -1,10 +1,13 @@
 import random
+
+from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.storage import session
 from django.core.exceptions import ValidationError
 from django.http import request, HttpResponseRedirect
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404, render_to_response
+from django.template import RequestContext
 from django.template.loader import get_template
 from django.urls import reverse_lazy
 import datetime
@@ -15,10 +18,11 @@ from search_views.views import SearchListView
 from share_the_game import settings
 from sharing_app.forms import RegisterForm, ProductSearchForm, ProductAddForm, ShareForm
 from sharing_app.models import Profile, Product, ProductProfile
-from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.conf import settings
+import logging
 from sharing_app.templatetags.my_app_filters import ProductSearchFilter
+from django.utils.translation import ugettext as _
 
 
 class MainPageView(View):
@@ -28,7 +32,7 @@ class MainPageView(View):
 		except:
 			just_logged_out = False
 		ctx = {
-			'just_logged_out':just_logged_out
+			'just_logged_out': just_logged_out
 
 		}
 		return render(request, 'main_page.html', ctx)
@@ -57,7 +61,6 @@ class RegisterView(FormView):
 		return render(self.request, 'main_page.html', {'form': form})
 
 
-
 class ProductSearchListView(LoginRequiredMixin, SearchListView):
 	login_url = '/login/'
 	model = Product
@@ -77,9 +80,7 @@ class ProductAddView(LoginRequiredMixin, FormView, ):
 	template_name = 'product_form.html'
 	form_class = ProductAddForm
 
-
 	def form_valid(self, form):
-		# product_add_form = form
 		new_product = Product()
 		new_product.name = form.cleaned_data['name']
 		new_product.category = form.cleaned_data['category']
@@ -90,14 +91,12 @@ class ProductAddView(LoginRequiredMixin, FormView, ):
 		new_product.image = self.request.FILES['image']
 		new_product.status = 'pending'
 		new_product.save()
-		# product_add_form.save(commit=False)
-		# return redirect('product_detail', new_product.pk)
 		return redirect('main_page')
-
 
 
 class ProfileView(LoginRequiredMixin, View):
 	login_url = '/login/'
+
 	def get(self, request):
 		logged_user = Profile.objects.get(pk=request.user.id)
 		user_products = ProductProfile.objects.filter(profile__user_id=logged_user.id)
@@ -145,11 +144,11 @@ class BorrowProductView(LoginRequiredMixin, View):
 		form = ShareForm()
 		ctx = {
 			'form': form,
-			'object_id':object_id
+			'object_id': object_id
 		}
 		return render(request, 'borrow_product.html', ctx)
 
-	def post(self, request,object_id):
+	def post(self, request, object_id):
 		form = ShareForm(request.POST)
 
 		if form.is_valid():
@@ -160,12 +159,49 @@ class BorrowProductView(LoginRequiredMixin, View):
 			delivery_adress = form.cleaned_data['delivery_adress']
 			selected_product = Product.objects.get(pk=object_id)
 			logged_user = Profile.objects.get(pk=request.user.id)
-			if borrow_date < datetime.datetime.now().date() or return_date <= borrow_date or return_date < datetime.datetime.now().date():
-				raise ValidationError('Data jest niepoprawna')
+			if borrow_date < datetime.datetime.now().date() or return_date <= borrow_date:
+				ctx = {'form': ShareForm()}
+				messages.error(request, 'Wprowadź poprawne daty. Daty nie mogą być wcześniejsze niż dziś oraz termin zwortu nie może być wcześniejszy niż wypożyczenia')
+				return render(request, 'date_message.html', ctx)
 			else:
 				if how_get == 'Odbiór osobisty':
-					owners_from_city = ProductProfile.objects.filter(profile__city=selected_city, product_id=object_id, user_have=True).exclude(profile_id=logged_user.id)
-					sharing_user = random.choice(owners_from_city)
+					owners_from_city = ProductProfile.objects.filter(profile__city=selected_city, product_id=object_id,
+																	 user_have=True).exclude(profile_id=logged_user.id)
+					# sharing_user = random.choice(owners_from_city)
+					if not owners_from_city:
+						ctx = {'form': ShareForm()}
+						messages.error(request,
+									   'Obecnie nikt z wybranego miasta nie posiada danej gry. Spróbuj wyszukać wsród użytkowników z całej Polski nie wpisując miasta oraz wybierając wysyłkę pocztową')
+						return render(request, 'date_message.html', ctx)
+					else:
+						owners_from_city = ProductProfile.objects.filter(profile__city=selected_city, product_id=object_id,
+																	 user_have=True).exclude(profile_id=logged_user.id)
+						sharing_user = random.choice(owners_from_city)
+						from_email = settings.EMAIL_HOST_USER
+						to_email = [from_email, sharing_user.profile.user.email]
+						send_mail(
+							'Cześć! ',
+							get_template('email.html').render(
+							({
+								'logged_user': logged_user,
+								'selected_product': selected_product,
+								'borrow_date': borrow_date,
+								'return_date': return_date,
+								'how_get': how_get,
+								'delivery_adress': delivery_adress,
+								'sharing_user': sharing_user,
+								'object_id': object_id
+							})
+						),
+						from_email,
+						to_email,
+						fail_silently=True,
+					)
+
+				if how_get == 'Wysyłka(opłacana przez osobę wypożyczającą)':
+					owners_all = ProductProfile.objects.filter(product_id=object_id, user_have=True).exclude(
+						profile_id=logged_user.id)
+					sharing_user = random.choice(owners_all)
 					from_email = settings.EMAIL_HOST_USER
 					to_email = [from_email, sharing_user.profile.user.email]
 					send_mail(
@@ -186,39 +222,18 @@ class BorrowProductView(LoginRequiredMixin, View):
 						to_email,
 						fail_silently=True,
 					)
-				else:
-					owners_all = ProductProfile.objects.filter(product_id=object_id, user_have=True).exclude(profile_id=logged_user.id)
-					sharing_user = random.choice(owners_all)
-					from_email = settings.EMAIL_HOST_USER
-					to_email = [from_email, sharing_user.profile.user.email]
-					send_mail(
-						'Cześć! ',
-						get_template('email.html').render(
-							({
-								'logged_user': logged_user,
-								'selected_product': selected_product,
-								'borrow_date': borrow_date,
-								'return_date': return_date,
-								'how_get': how_get,
-								'delivery_adress': delivery_adress,
-								'sharing_user': sharing_user,
-								'object_id':object_id
-							})
-						),
-						from_email,
-						to_email,
-						fail_silently=True,
-					)
 
-				return render(request, 'success_borrow.html', {'sharing_user':sharing_user})
+				return render(request, 'success_borrow.html', {'sharing_user': sharing_user})
 
-class SuccessBorrowView(LoginRequiredMixin,TemplateView):
+
+class SuccessBorrowView(LoginRequiredMixin, TemplateView):
 	login_url = '/login/'
 	template_name = 'success_borrow.html'
 
 
-class UnavailableProductView(LoginRequiredMixin,View):
+class UnavailableProductView(LoginRequiredMixin, View):
 	login_url = '/login/'
+
 	def get(self, request, object_id):
 		product = Product.objects.get(pk=object_id)
 		logged_user = Profile.objects.get(pk=request.user.id)
@@ -229,11 +244,12 @@ class UnavailableProductView(LoginRequiredMixin,View):
 			'user_selected_product': user_selected_product,
 			'user_products': user_products,
 		}
-		return render(request, 'profile.html',ctx)
+		return render(request, 'profile.html', ctx)
 
 
-class AvailableProductView(LoginRequiredMixin,View):
+class AvailableProductView(LoginRequiredMixin, View):
 	login_url = '/login/'
+
 	def get(self, request, object_id):
 		product = Product.objects.get(pk=object_id)
 		logged_user = Profile.objects.get(pk=request.user.id)

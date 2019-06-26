@@ -19,6 +19,7 @@ from django.urls import path, include
 from django.contrib.auth.views import LogoutView, LoginView, PasswordResetCompleteView, PasswordResetView
 from sharing_app import views
 from share_the_game import settings
+from django.conf.urls import handler404, handler500
 
 urlpatterns = [
 	path('admin/', admin.site.urls),
@@ -34,7 +35,7 @@ urlpatterns = [
 	path('accounts/profile/<int:object_id>/', views.AvailableProductView.as_view(), name='available'),
 	path('search/<int:object_id>/collection/', views.AddToCollectionView.as_view(), name='add_to_collection'),
 	path('search/<int:object_id>/borrow/', views.BorrowProductView.as_view(), name='borrow_product'),]
-# ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
 
 if settings.DEBUG:
 	urlpatterns += static(settings.STATIC_URL)

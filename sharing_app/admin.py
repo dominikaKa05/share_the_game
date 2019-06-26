@@ -8,7 +8,7 @@ from .forms import ProductAddForm
 from .views import ProductAddView
 
 
-# admin.site.register(Profile)
+
 class ProductAdmin(admin.ModelAdmin):
 	list_display = ['name', 'status']
 	ordering = ['name']
@@ -30,7 +30,7 @@ class ProductAdmin(admin.ModelAdmin):
 						  {'title': u'Choose genre',
 						   'objects': queryset,
 						   'form': form})
-			# set_genre_action.short_description = u'Update genre of selected movies'
+
 
 
 admin.site.register(Product, ProductAdmin)
