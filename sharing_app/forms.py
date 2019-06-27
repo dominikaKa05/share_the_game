@@ -59,7 +59,7 @@ class ShareForm(forms.Form):
 	DELIVERY_CHOICES = (
 		('Odbiór osobisty', 'Odbiór osobisty'),
 		('Wysyłka (opłacana przez osobę wypożyczają)', 'Wysyłka (opłacana przez osobę wypożyczają)'))
-	selected_city = forms.CharField(label='Miejscowość zamieszkania wypożyczającego', max_length=100, required=False)
+	selected_city = forms.CharField(label='Miejscowość zamieszkania wypożyczającego (wypełnij jeśli wybierasz odbiór osobisty)', max_length=100, required=False)
 	how_get = forms.ChoiceField(label='Wybierz sposoób dostarczenia gry', choices=DELIVERY_CHOICES, required=True)
 	delivery_adress = forms.CharField(label='Adres do wysyłki', required=False)
 	borrow_date = forms.DateField(label='Data wypożyczenia', required=True,

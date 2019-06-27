@@ -154,46 +154,45 @@ class BorrowProductView(LoginRequiredMixin, View):
 			selected_product = Product.objects.get(pk=object_id)
 			logged_user = Profile.objects.get(pk=request.user.id)
 			if borrow_date < datetime.datetime.now().date() or return_date <= borrow_date:
-				ctx = {'form': ShareForm()}
+				# ctx = {'form': ShareForm()}
 				messages.error(request, 'Wprowadź poprawne daty. Daty nie mogą być wcześniejsze niż dziś oraz termin zwortu nie może być wcześniejszy niż wypożyczenia')
-				return render(request, 'date_message.html', ctx)
+				return render(request, 'date_message.html')
 			else:
 				if how_get == 'Odbiór osobisty':
 					owners_from_city = ProductProfile.objects.filter(profile__city=selected_city, product_id=object_id,
 																	 user_have=True).exclude(profile_id=logged_user.id)
 					if not owners_from_city:
-						ctx = {'form': ShareForm()}
-						messages.error(request,
-									   'Obecnie nikt z wybranego miasta nie posiada danej gry. Spróbuj wyszukać wsród użytkowników z całej Polski nie wpisując miasta oraz wybierając wysyłkę pocztową')
-						return render(request, 'date_message.html', ctx)
+						messages.error(request,'Obecnie nikt z wybranego miasta nie posiada danej gry. Spróbuj wyszukać wsród użytkowników z całej Polski nie wpisując miasta oraz wybierając wysyłkę pocztową')
+						return render(request, 'date_message.html')
 					else:
-						owners_from_city = ProductProfile.objects.filter(profile__city=selected_city, product_id=object_id,
-																	 user_have=True).exclude(profile_id=logged_user.id)
+						owners_from_city = ProductProfile.objects.filter(profile__city=selected_city,
+																		 product_id=object_id,
+																		 user_have=True).exclude(profile_id=logged_user.id)
+
 						sharing_user = random.choice(owners_from_city)
 						from_email = settings.EMAIL_HOST_USER
 						to_email = [from_email, sharing_user.profile.user.email]
 						send_mail(
 							'Cześć! ',
 							get_template('email.html').render(
-							({
-								'logged_user': logged_user,
-								'selected_product': selected_product,
-								'borrow_date': borrow_date,
-								'return_date': return_date,
-								'how_get': how_get,
-								'delivery_adress': delivery_adress,
-								'sharing_user': sharing_user,
-								'object_id': object_id
-							})
-						),
-						from_email,
-						to_email,
-						fail_silently=True,
-					)
-
-				if how_get == 'Wysyłka(opłacana przez osobę wypożyczającą)':
+								({
+									'logged_user': logged_user,
+									'selected_product': selected_product,
+									'borrow_date': borrow_date,
+									'return_date': return_date,
+									'how_get': how_get,
+									'delivery_adress': delivery_adress,
+									'sharing_user': sharing_user,
+									'object_id': object_id
+									})
+							),
+							from_email,
+							to_email,
+							fail_silently=True,
+						)
+				else:
 					owners_all = ProductProfile.objects.filter(product_id=object_id, user_have=True).exclude(
-						profile_id=logged_user.id)
+					profile_id=logged_user.id)
 					sharing_user = random.choice(owners_all)
 					from_email = settings.EMAIL_HOST_USER
 					to_email = [from_email, sharing_user.profile.user.email]
@@ -216,7 +215,70 @@ class BorrowProductView(LoginRequiredMixin, View):
 						fail_silently=True,
 					)
 
-				return render(request, 'success_borrow.html', {'sharing_user': sharing_user})
+			return render(request, 'success_borrow.html', {'sharing_user': sharing_user})
+
+				# return render(request, 'date_message.html', ctx)
+			# else:
+			# 	if how_get == 'Odbiór osobisty':
+			# 		owners_from_city = ProductProfile.objects.filter(profile__city=selected_city, product_id=object_id,
+			# 														 user_have=True).exclude(profile_id=logged_user.id)
+			# 		if not owners_from_city:
+			# 			ctx = {'form': ShareForm()}
+			# 			messages.error(request,
+			# 						   'Obecnie nikt z wybranego miasta nie posiada danej gry. Spróbuj wyszukać wsród użytkowników z całej Polski nie wpisując miasta oraz wybierając wysyłkę pocztową')
+			# 			return render(request, 'date_message.html', ctx)
+			# 		else:
+			# 			owners_from_city = ProductProfile.objects.filter(profile__city=selected_city, product_id=object_id,
+			# 														 user_have=True).exclude(profile_id=logged_user.id)
+			# 			sharing_user = random.choice(owners_from_city)
+			# 			from_email = settings.EMAIL_HOST_USER
+			# 			to_email = [from_email, sharing_user.profile.user.email]
+			# 			send_mail(
+			# 				'Cześć! ',
+			# 				get_template('email.html').render(
+			# 				({
+			# 					'logged_user': logged_user,
+			# 					'selected_product': selected_product,
+			# 					'borrow_date': borrow_date,
+			# 					'return_date': return_date,
+			# 					'how_get': how_get,
+			# 					'delivery_adress': delivery_adress,
+			# 					'sharing_user': sharing_user,
+			# 					'object_id': object_id
+			# 				})
+			# 			),
+			# 			from_email,
+			# 			to_email,
+			# 			fail_silently=True,
+			# 		)
+			# 		return render(request, 'success_borrow.html', {'sharing_user': sharing_user})
+			#
+			# 	elif how_get == 'Wysyłka(opłacana przez osobę wypożyczającą)':
+			# 		owners_all = ProductProfile.objects.filter(product_id=object_id, user_have=True).exclude(
+			# 			profile_id=logged_user.id)
+			# 		sharing_us = random.choice(owners_all)
+			# 		from_email = settings.EMAIL_HOST_USER
+			# 		to_email = [from_email, sharing_us.profile.user.email]
+			# 		send_mail(
+			# 			'Cześć! ',
+			# 			get_template('email.html').render(
+			# 				({
+			# 					'logged_user': logged_user,
+			# 					'selected_product': selected_product,
+			# 					'borrow_date': borrow_date,
+			# 					'return_date': return_date,
+			# 					'how_get': how_get,
+			# 					'delivery_adress': delivery_adress,
+			# 					'sharing_us': sharing_us,
+			# 					'object_id': object_id
+			# 				})
+			# 			),
+			# 			from_email,
+			# 			to_email,
+			# 			fail_silently=True,
+			# 			)
+			#
+			# 		return render(request, 'success_borrow.html', {'sharing_user': sharing_us})
 
 
 class SuccessBorrowView(LoginRequiredMixin, TemplateView):

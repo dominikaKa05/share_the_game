@@ -5,9 +5,10 @@
     <form method="post" novalidate>
 
   <h2>Logowanie</h2>
-  <form action='{% url 'login' %}' method="post" autocomplete="off">
+  <form action='{% url 'login' %}' method="post" autocomplete="off" class="input-small">
     {% csrf_token %}
     {{ form|crispy }}
+
     <button type='submit' class="btn btn-light">Zaloguj się</button>
   </form>
 
